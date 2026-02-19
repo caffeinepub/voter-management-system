@@ -68,7 +68,7 @@ export const Voter = IDL.Record({
   'district' : IDL.Opt(IDL.Text),
   'taluka' : IDL.Opt(IDL.Text),
   'state' : IDL.Opt(IDL.Text),
-  'voterId' : IDL.Nat,
+  'voterId' : IDL.Text,
   'address' : IDL.Opt(IDL.Text),
   'gender' : IDL.Opt(Gender),
   'politicalIdeology' : IDL.Opt(IDL.Text),
@@ -108,7 +108,7 @@ export const idlService = IDL.Service({
   'addVoter' : IDL.Func(
       [
         IDL.Text,
-        IDL.Nat,
+        IDL.Text,
         IDL.Opt(IDL.Text),
         IDL.Opt(IDL.Nat),
         IDL.Opt(IDL.Text),
@@ -148,6 +148,7 @@ export const idlService = IDL.Service({
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'getVoterById' : IDL.Func([IDL.Text], [IDL.Opt(Voter)], ['query']),
   'getVoters' : IDL.Func([], [IDL.Vec(Voter)], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
@@ -217,7 +218,7 @@ export const idlFactory = ({ IDL }) => {
     'district' : IDL.Opt(IDL.Text),
     'taluka' : IDL.Opt(IDL.Text),
     'state' : IDL.Opt(IDL.Text),
-    'voterId' : IDL.Nat,
+    'voterId' : IDL.Text,
     'address' : IDL.Opt(IDL.Text),
     'gender' : IDL.Opt(Gender),
     'politicalIdeology' : IDL.Opt(IDL.Text),
@@ -257,7 +258,7 @@ export const idlFactory = ({ IDL }) => {
     'addVoter' : IDL.Func(
         [
           IDL.Text,
-          IDL.Nat,
+          IDL.Text,
           IDL.Opt(IDL.Text),
           IDL.Opt(IDL.Nat),
           IDL.Opt(IDL.Text),
@@ -297,6 +298,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'getVoterById' : IDL.Func([IDL.Text], [IDL.Opt(Voter)], ['query']),
     'getVoters' : IDL.Func([], [IDL.Vec(Voter)], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),

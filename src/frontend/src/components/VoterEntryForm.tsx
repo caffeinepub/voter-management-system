@@ -35,7 +35,7 @@ type VoterFormData = {
 };
 
 export default function VoterEntryForm() {
-  const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<VoterFormData>();
+  const { register, handleSubmit, formState: { errors }, reset, watch } = useForm<VoterFormData>();
   const { mutate: addVoter, isPending } = useAddVoter();
   const [gender, setGender] = useState<'male' | 'female' | 'other'>('male');
   const [photo, setPhoto] = useState<ExternalBlob | null>(null);
@@ -51,16 +51,29 @@ export default function VoterEntryForm() {
       return;
     }
 
+    // Validate required fields
+    if (!data.name || !data.name.trim()) {
+      toast.error('Name is required');
+      return;
+    }
+
+    if (!data.voterId || !data.voterId.trim()) {
+      toast.error('Voter ID is required');
+      return;
+    }
+
+    const voterData = {
+      ...data,
+      houseNumber: data.houseNumber ? BigInt(data.houseNumber) : null,
+      voterId: data.voterId.trim(),
+      gender,
+      photo,
+      signature,
+      educationalDocuments: documents,
+    };
+
     addVoter(
-      {
-        ...data,
-        houseNumber: data.houseNumber ? BigInt(data.houseNumber) : null,
-        voterId: BigInt(data.voterId || 0),
-        gender,
-        photo,
-        signature,
-        educationalDocuments: documents,
-      },
+      voterData,
       {
         onSuccess: () => {
           toast.success('Voter added successfully!');
@@ -71,7 +84,8 @@ export default function VoterEntryForm() {
           setDocuments([]);
         },
         onError: (error) => {
-          toast.error(`Failed to add voter: ${error.message}`);
+          const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+          toast.error(`Failed to add voter: ${errorMessage}`);
         },
       }
     );
@@ -140,10 +154,10 @@ export default function VoterEntryForm() {
               Gender
             </Label>
             <Select value={gender} onValueChange={(value: 'male' | 'female' | 'other') => setGender(value)} disabled={isPending}>
-              <SelectTrigger id="gender">
+              <SelectTrigger id="gender" className="bg-white">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white">
                 <SelectItem value="male">Male</SelectItem>
                 <SelectItem value="female">Female</SelectItem>
                 <SelectItem value="other">Other</SelectItem>

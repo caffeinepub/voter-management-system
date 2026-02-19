@@ -31,7 +31,7 @@ export interface Voter {
     district?: string;
     taluka?: string;
     state?: string;
-    voterId: bigint;
+    voterId: string;
     address?: string;
     gender?: Gender;
     politicalIdeology?: string;
@@ -74,7 +74,7 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    addVoter(name: string, voterId: bigint, fatherHusbandName: string | null, houseNumber: bigint | null, address: string | null, gender: Gender | null, area: string | null, taluka: string | null, district: string | null, state: string | null, pincode: string | null, mobileNo: string | null, dob: string | null, caste: string | null, education: string | null, profession: string | null, office: string | null, politicalIdeology: string | null, comments: string | null, photo: ExternalBlob | null, signature: ExternalBlob | null, educationalDocuments: Array<ExternalBlob> | null): Promise<void>;
+    addVoter(name: string, voterId: string, fatherHusbandName: string | null, houseNumber: bigint | null, address: string | null, gender: Gender | null, area: string | null, taluka: string | null, district: string | null, state: string | null, pincode: string | null, mobileNo: string | null, dob: string | null, caste: string | null, education: string | null, profession: string | null, office: string | null, politicalIdeology: string | null, comments: string | null, photo: ExternalBlob | null, signature: ExternalBlob | null, educationalDocuments: Array<ExternalBlob> | null): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     assignTask(title: string, description: string, deadline: string, assignedTo: Role, attachments: Array<ExternalBlob>): Promise<void>;
     assignUserRole(user: Principal, profile: UserProfile): Promise<void>;
@@ -82,6 +82,7 @@ export interface backendInterface {
     getCallerUserRole(): Promise<UserRole>;
     getTasks(): Promise<Array<Task>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
+    getVoterById(voterId: string): Promise<Voter | null>;
     getVoters(): Promise<Array<Voter>>;
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;

@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Make all voter fields optional except Name and Voter ID to allow quick voter entry with minimal required information.
+**Goal:** Restore the missing main navigation menu that disappeared after Version 15 deployment.
 
 **Planned changes:**
-- Update backend Voter type to make all fields optional except name and voterId
-- Remove backend validation requirements for all fields except name and voterId in the addVoter function
-- Remove required validation from all frontend form fields except Name and Voter ID in VoterEntryForm
-- Keep all form fields visible but remove required indicators from optional fields
+- Restore navigation menu in frontend/src/App.tsx displaying all six menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics)
+- Verify navigation menu JSX elements are present and not hidden by CSS or conditional rendering
+- Ensure menu is visible on both mobile and desktop views
+- Maintain existing header with logout button functionality
 
-**User-visible outcome:** Users can submit the voter entry form with only Name and Voter ID filled in, while all other fields remain visible but optional. This enables faster data entry when complete voter information is not immediately available.
+**User-visible outcome:** Users can see and use the main navigation menu to access all sections of the application (Dashboard, Add Voter, Voter List, Label Printing, Task Management, and Analytics) on both mobile and desktop devices.

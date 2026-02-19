@@ -3,8 +3,8 @@ import { Gender } from '../backend';
 interface ParsedVoter {
   name: string;
   fatherHusbandName: string;
-  houseNumber: bigint;
-  voterId: bigint;
+  houseNumber: bigint | null;
+  voterId: string;
   address: string;
   gender: Gender;
   area: string;
@@ -87,7 +87,7 @@ export async function parseExcelFile(file: File): Promise<ParsedVoter[]> {
           });
 
           // Validate required fields
-          if (!row['Name'] || !row['Mobile'] || !row['Voter ID']) {
+          if (!row['Name'] || !row['Voter ID']) {
             continue; // Skip rows with missing required fields
           }
 
@@ -97,32 +97,32 @@ export async function parseExcelFile(file: File): Promise<ParsedVoter[]> {
           if (genderStr === 'male') gender = Gender.male;
           else if (genderStr === 'female') gender = Gender.female;
 
-          // Parse numeric fields safely
-          const parseNumber = (value: string): bigint => {
+          // Parse house number safely
+          const parseHouseNumber = (value: string): bigint | null => {
             const num = value.replace(/[^0-9]/g, '');
-            return num ? BigInt(num) : BigInt(0);
+            return num ? BigInt(num) : null;
           };
 
           const voter: ParsedVoter = {
-            name: String(row['Name'] || ''),
-            fatherHusbandName: String(row['Father/Husband Name'] || ''),
-            houseNumber: parseNumber(row['House Number'] || '0'),
-            voterId: parseNumber(row['Voter ID'] || '0'),
-            address: String(row['Address'] || ''),
+            name: String(row['Name'] || '').trim(),
+            fatherHusbandName: String(row['Father/Husband Name'] || '').trim(),
+            houseNumber: parseHouseNumber(row['House Number'] || ''),
+            voterId: String(row['Voter ID'] || '').trim(),
+            address: String(row['Address'] || '').trim(),
             gender,
-            area: String(row['Area'] || ''),
-            taluka: String(row['Taluka'] || ''),
-            district: String(row['District'] || ''),
-            state: String(row['State'] || ''),
-            pincode: String(row['Pincode'] || ''),
-            mobileNo: String(row['Mobile'] || ''),
-            dob: String(row['Date of Birth'] || ''),
-            caste: String(row['Caste'] || ''),
-            education: String(row['Education'] || ''),
-            profession: String(row['Profession'] || ''),
-            office: String(row['Office'] || ''),
-            politicalIdeology: String(row['Political Ideology'] || ''),
-            comments: String(row['Comments'] || '').slice(0, 500),
+            area: String(row['Area'] || '').trim(),
+            taluka: String(row['Taluka'] || '').trim(),
+            district: String(row['District'] || '').trim(),
+            state: String(row['State'] || '').trim(),
+            pincode: String(row['Pincode'] || '').trim(),
+            mobileNo: String(row['Mobile'] || '').trim(),
+            dob: String(row['Date of Birth'] || '').trim(),
+            caste: String(row['Caste'] || '').trim(),
+            education: String(row['Education'] || '').trim(),
+            profession: String(row['Profession'] || '').trim(),
+            office: String(row['Office'] || '').trim(),
+            politicalIdeology: String(row['Political Ideology'] || '').trim(),
+            comments: String(row['Comments'] || '').slice(0, 500).trim(),
             photo: null,
             signature: null,
             educationalDocuments: [],

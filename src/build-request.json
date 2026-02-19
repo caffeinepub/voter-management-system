@@ -1,121 +1,62 @@
 {
   "kind": "build_request",
-  "title": "Make all voter fields optional except Name and Voter ID in both frontend and backend",
-  "projectName": "Voter Management System",
+  "title": "Restore missing main navigation menu after Version 15 deployment",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-51",
-      "text": "Update the backend Voter type definition in backend/main.mo to make all fields optional except name and voterId. Fields that must become optional (accept null values) include: fatherHusbandName, address, gender, area, taluka, district, state, pincode, mobile, dob, caste, education, profession, office, politicalIdeology, comments, houseNumber, photo, signature, and educationalDocuments.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "Backend validation: The backend will accept voters with only Name and Voter ID required - all other fields can be null/optional"
-        ]
-      },
-      "acceptanceCriteria": [
-        "The Voter type in backend/main.mo has name and voterId as required (non-null) fields",
-        "All other voter fields accept null or optional values in the type definition",
-        "The addVoter function successfully creates voter records with only name and voterId provided",
-        "Existing voters with all fields populated continue to work correctly"
-      ]
-    },
-    {
-      "id": "REQ-52",
-      "text": "Update the addVoter function in backend/main.mo to remove validation requirements for all fields except name and voterId. The function must accept and store voter records where only name and voterId are provided, with all other fields as null or empty.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "Backend validation: The backend will accept voters with only Name and Voter ID required"
-        ]
-      },
-      "acceptanceCriteria": [
-        "The addVoter function validates that name is non-empty",
-        "The addVoter function validates that voterId is non-empty",
-        "The addVoter function accepts null/empty values for all other fields without throwing errors",
-        "Voter records can be successfully created with minimal data (name + voterId only)"
-      ]
-    },
-    {
-      "id": "REQ-53",
-      "text": "Update the VoterEntryForm component in frontend/src/components/VoterEntryForm.tsx to remove required validation from all fields except Name and Voter ID. All other form fields (Father/Husband name, Address, Gender, Area, Taluka, District, State, Pincode, Mobile no., DOB, Caste, Education, Profession, Office, Political ideology, Comments, House Number, Photo, Signature, Educational Documents) must remain visible on the form but become optional.",
+      "id": "REQ-66",
+      "text": "Restore the main navigation menu in frontend/src/App.tsx that displays menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) for both mobile and desktop views. The navigation menu disappeared after Version 15 deployment while the header with 'Voter Management System' title and logout button remain visible.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-1",
+          "msg-2",
+          "msg-3"
         ],
         "quotes": [
-          "Form behavior: All fields remain visible on the form (not hidden)",
-          "make only Name and Voter ID compulsory"
+          "menu bar is missing from both mobile and desktop view",
+          "1 yes main menu 2 yes it worked before last deployment 3 yes header and logout is visible"
         ]
       },
       "acceptanceCriteria": [
-        "The Name field displays required indicator and prevents submission when empty",
-        "The Voter ID field displays required indicator and prevents submission when empty",
-        "All other fields do not show required indicators",
-        "Form can be successfully submitted with only Name and Voter ID filled",
-        "All fields remain visible in the form layout",
-        "No console errors appear when submitting a form with minimal data"
+        "Main navigation menu is visible on both mobile and desktop views",
+        "Menu displays all items: Dashboard, Add Voter, Voter List, Label Printing, Task Management, and Analytics",
+        "Navigation menu appears below or alongside the header with 'Voter Management System' title",
+        "Logout button remains visible and functional",
+        "Navigation links route correctly to their respective pages"
       ]
     },
     {
-      "id": "REQ-54",
-      "text": "Remove react-hook-form validation rules (required: true) from all optional fields in the VoterEntryForm component. Keep validation only for the name and voterId fields.",
+      "id": "REQ-67",
+      "text": "Verify that the navigation menu rendering logic in frontend/src/App.tsx was not accidentally removed or conditionally hidden during the Version 15 deployment. Check for any CSS classes, conditional rendering, or display properties that may be causing the menu to be hidden.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-2"
         ],
         "quotes": [
-          "make only Name and Voter ID compulsory, while keeping all other fields visible but optional"
+          "it worked before last deployment"
         ]
       },
       "acceptanceCriteria": [
-        "The form's register() calls for optional fields do not include required validation rules",
-        "The name field retains its required validation rule",
-        "The voterId field retains its required validation rule",
-        "Form validation errors only appear for Name and Voter ID when they are empty",
-        "Users can skip any optional field without triggering validation errors"
-      ]
-    },
-    {
-      "id": "REQ-55",
-      "text": "Verify that House Number field in the VoterEntryForm is optional and does not require a value for form submission, as confirmed by the user.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "House Number: Confirmed as optional (not required)"
-        ]
-      },
-      "acceptanceCriteria": [
-        "House Number field does not show a required indicator",
-        "Form submits successfully when House Number is left empty",
-        "House Number field accepts alphanumeric text input"
+        "Navigation menu JSX elements are present in the App.tsx component",
+        "No CSS classes with display:none or visibility:hidden are applied to navigation elements",
+        "Conditional rendering logic does not prevent menu from displaying when user is authenticated",
+        "Navigation menu is not positioned off-screen or with zero height/width"
       ]
     }
   ],
   "constraints": [
-    "Do not hide any form fields - all fields must remain visible in the UI",
-    "Do not modify the useInternetIdentity.ts, useInternetIdentity.tsx, useActor.ts, main.tsx, or frontend/src/components/ui files",
-    "Preserve the single-actor backend architecture in backend/main.mo",
-    "Keep the existing Voter type fields intact - only change their optionality",
-    "Do not alter the House Number and Voter ID text input types that were previously changed from number to text"
+    "Do not modify the Internet Identity authentication logic in frontend/src/hooks/useInternetIdentity.ts",
+    "Keep the header with 'Voter Management System' title and logout button visible and functional",
+    "Maintain the existing dark blue (#002080) color scheme for header and buttons",
+    "Ensure navigation menu works with the existing TanStack Router setup"
   ],
   "nonGoals": [
-    "Hiding or removing any form fields from the VoterEntryForm",
-    "Adding new fields to the voter record",
-    "Changing the form layout or visual design",
-    "Modifying the Voter List page or other components",
-    "Creating a migration file (not needed for making fields optional)"
+    "Adding new navigation menu items beyond the six existing ones",
+    "Redesigning the navigation menu layout or styling",
+    "Modifying the logout button behavior or appearance",
+    "Changing the header text or responsive sizing"
   ],
   "imageRequirements": {
     "required": [],

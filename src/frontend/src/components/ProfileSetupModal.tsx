@@ -69,10 +69,10 @@ export default function ProfileSetupModal() {
           <div className="space-y-2">
             <Label htmlFor="role">Role</Label>
             <Select value={role} onValueChange={setRole} disabled={isPending}>
-              <SelectTrigger id="role">
+              <SelectTrigger id="role" className="bg-white">
                 <SelectValue placeholder="Select your role" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white">
                 <SelectItem value="Admin">Admin</SelectItem>
                 <SelectItem value="Supervisor">Supervisor</SelectItem>
                 <SelectItem value="Karyakarta">Karyakarta</SelectItem>

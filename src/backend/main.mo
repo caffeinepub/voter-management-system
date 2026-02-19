@@ -8,10 +8,9 @@ import Storage "blob-storage/Storage";
 import MixinStorage "blob-storage/Mixin";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
-import Migration "migration";
 
-// Use migration module to transform old actor state to new one.
-(with migration = Migration.run)
+
+
 actor {
   include MixinStorage();
 
@@ -19,7 +18,7 @@ actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
-  let voters = Map.empty<Nat, Voter>();
+  let voters = Map.empty<Text, Voter>();
   var nextVoterId = 1;
 
   public type UserProfile = {
@@ -32,7 +31,7 @@ actor {
   public type Voter = {
     srNo : Nat;
     name : Text;
-    voterId : Nat;
+    voterId : Text;
     fatherHusbandName : ?Text;
     houseNumber : ?Nat;
     address : ?Text;
@@ -87,7 +86,6 @@ actor {
   let tasks = Map.empty<Nat, Task>();
   var nextTaskId = 1;
 
-  // Helper function to get user's application role from profile
   private func getCallerRole(caller : Principal) : ?Role {
     switch (userProfiles.get(caller)) {
       case (?profile) {
@@ -102,21 +100,27 @@ actor {
     };
   };
 
-  // Helper function to check if caller has required role
   private func hasRole(caller : Principal, requiredRole : Role) : Bool {
     switch (getCallerRole(caller)) {
       case (?role) {
         switch (requiredRole, role) {
           case (#admin, #admin) { true };
           case (#supervisor, #supervisor) { true };
-          case (#supervisor, #admin) { true }; // Admin can act as supervisor
+          case (#supervisor, #admin) { true };
           case (#karyakarta, #karyakarta) { true };
-          case (#karyakarta, #supervisor) { true }; // Supervisor can act as karyakarta
-          case (#karyakarta, #admin) { true }; // Admin can act as karyakarta
+          case (#karyakarta, #supervisor) { true };
+          case (#karyakarta, #admin) { true };
           case (_, _) { false };
         };
       };
       case (null) { false };
+    };
+  };
+
+  private func isCustomAdmin(caller : Principal) : Bool {
+    switch (getCallerRole(caller)) {
+      case (?#admin) { true };
+      case (_) { false };
     };
   };
 
@@ -128,7 +132,11 @@ actor {
   };
 
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view profiles");
+    };
+    
+    if (caller != user and not isCustomAdmin(caller)) {
       Runtime.trap("Unauthorized: Can only view your own profile or must be admin");
     };
     userProfiles.get(user);
@@ -139,38 +147,34 @@ actor {
       Runtime.trap("Unauthorized: Only authenticated users can save profiles");
     };
 
-    // Check if user is trying to change their role
-    switch (userProfiles.get(caller)) {
-      case (?existingProfile) {
-        // If role is being changed, only admins can do it
-        if (existingProfile.role != profile.role) {
-          if (not AccessControl.isAdmin(accessControlState, caller)) {
-            Runtime.trap("Unauthorized: Only admins can change user roles");
-          };
-        };
-      };
-      case (null) {
-        // New profile - only admins can set roles
-        if (not AccessControl.isAdmin(accessControlState, caller)) {
-          Runtime.trap("Unauthorized: Only admins can assign roles to new profiles");
-        };
-      };
-    };
-
-    // Validate role value
     if (profile.role != "Admin" and profile.role != "Supervisor" and profile.role != "Karyakarta") {
       Runtime.trap("Invalid role: Must be Admin, Supervisor, or Karyakarta");
     };
 
-    userProfiles.add(caller, profile);
+    switch (userProfiles.get(caller)) {
+      case (?existingProfile) {
+        // Users can update their name but not their role
+        if (existingProfile.role != profile.role) {
+          Runtime.trap("Unauthorized: Cannot change your own role. Contact an admin.");
+        };
+        userProfiles.add(caller, profile);
+      };
+      case (null) {
+        // New profiles can only be created by admins via assignUserRole
+        Runtime.trap("Unauthorized: New profiles must be created by an admin using assignUserRole");
+      };
+    };
   };
 
   public shared ({ caller }) func assignUserRole(user : Principal, profile : UserProfile) : async () {
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can assign roles");
+    };
+
+    if (not isCustomAdmin(caller)) {
       Runtime.trap("Unauthorized: Only admins can assign user roles");
     };
 
-    // Validate role value
     if (profile.role != "Admin" and profile.role != "Supervisor" and profile.role != "Karyakarta") {
       Runtime.trap("Invalid role: Must be Admin, Supervisor, or Karyakarta");
     };
@@ -180,7 +184,7 @@ actor {
 
   public shared ({ caller }) func addVoter(
     name : Text,
-    voterId : Nat,
+    voterId : Text,
     fatherHusbandName : ?Text,
     houseNumber : ?Nat,
     address : ?Text,
@@ -206,9 +210,18 @@ actor {
       Runtime.trap("Unauthorized: Only authenticated users can add voters");
     };
 
-    // Verify caller has at least Karyakarta role
     if (not hasRole(caller, #karyakarta)) {
       Runtime.trap("Unauthorized: Only users with Karyakarta role or above can add voters");
+    };
+
+    // Check for duplicate voterId
+    switch (voters.get(voterId)) {
+      case (?_) {
+        Runtime.trap("Voter with this ID already exists");
+      };
+      case (null) {
+        // Continue with adding voter
+      };
     };
 
     let voter : Voter = {
@@ -237,7 +250,7 @@ actor {
       educationalDocuments;
     };
 
-    voters.add(nextVoterId, voter);
+    voters.add(voterId, voter);
     nextVoterId += 1;
   };
 
@@ -246,7 +259,6 @@ actor {
       Runtime.trap("Unauthorized: Only authenticated users can view voter data");
     };
 
-    // Verify caller has at least Karyakarta role
     if (not hasRole(caller, #karyakarta)) {
       Runtime.trap("Unauthorized: Only users with Karyakarta role or above can view voters");
     };
@@ -254,12 +266,23 @@ actor {
     voters.values().toArray();
   };
 
+  public query ({ caller }) func getVoterById(voterId : Text) : async ?Voter {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view voter data");
+    };
+
+    if (not hasRole(caller, #karyakarta)) {
+      Runtime.trap("Unauthorized: Only users with Karyakarta role or above can view voters");
+    };
+
+    voters.get(voterId);
+  };
+
   public query ({ caller }) func getTasks() : async [Task] {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can view tasks");
     };
 
-    // Verify caller has at least Karyakarta role
     if (not hasRole(caller, #karyakarta)) {
       Runtime.trap("Unauthorized: Only users with Karyakarta role or above can view tasks");
     };
@@ -280,22 +303,18 @@ actor {
 
     let callerRole = getCallerRole(caller);
 
-    // Verify assignment permissions based on role hierarchy
     switch (callerRole) {
       case (?#admin) {
-        // Admin can only assign to Supervisors
         if (assignedTo != #supervisor) {
           Runtime.trap("Unauthorized: Admins can only assign tasks to Supervisors");
         };
       };
       case (?#supervisor) {
-        // Supervisor can only assign to Karyakartas
         if (assignedTo != #karyakarta) {
           Runtime.trap("Unauthorized: Supervisors can only assign tasks to Karyakartas");
         };
       };
       case (?#karyakarta) {
-        // Karyakartas cannot assign tasks
         Runtime.trap("Unauthorized: Karyakartas cannot assign tasks");
       };
       case (null) {
@@ -327,7 +346,6 @@ actor {
       case (?task) {
         let callerRole = getCallerRole(caller);
 
-        // Verify caller is assigned to this task or is the assigner
         let isAssignedUser = switch (callerRole) {
           case (?role) { role == task.assignedTo };
           case (null) { false };

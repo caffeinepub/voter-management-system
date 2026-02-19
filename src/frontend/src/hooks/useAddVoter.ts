@@ -6,7 +6,7 @@ interface AddVoterParams {
   name: string;
   fatherHusbandName: string;
   houseNumber: bigint | null;
-  voterId: bigint;
+  voterId: string;
   address: string;
   gender: 'male' | 'female' | 'other';
   area: string;
@@ -33,40 +33,46 @@ export function useAddVoter() {
 
   return useMutation({
     mutationFn: async (params: AddVoterParams) => {
-      if (!actor) throw new Error('Actor not available');
+      if (!actor) {
+        throw new Error('Actor not available');
+      }
 
       const genderEnum: Gender = 
         params.gender === 'male' ? Gender.male :
         params.gender === 'female' ? Gender.female :
         Gender.other;
 
-      return actor.addVoter(
-        params.name,
-        params.voterId,
-        params.fatherHusbandName || null,
-        params.houseNumber,
-        params.address || null,
-        genderEnum,
-        params.area || null,
-        params.taluka || null,
-        params.district || null,
-        params.state || null,
-        params.pincode || null,
-        params.mobileNo || null,
-        params.dob || null,
-        params.caste || null,
-        params.education || null,
-        params.profession || null,
-        params.office || null,
-        params.politicalIdeology || null,
-        params.comments || null,
-        params.photo,
-        params.signature,
-        params.educationalDocuments.length > 0 ? params.educationalDocuments : null
-      );
+      try {
+        const result = await actor.addVoter(
+          params.name,
+          params.voterId,
+          params.fatherHusbandName || null,
+          params.houseNumber,
+          params.address || null,
+          genderEnum,
+          params.area || null,
+          params.taluka || null,
+          params.district || null,
+          params.state || null,
+          params.pincode || null,
+          params.mobileNo || null,
+          params.dob || null,
+          params.caste || null,
+          params.education || null,
+          params.profession || null,
+          params.office || null,
+          params.politicalIdeology || null,
+          params.comments || null,
+          params.photo,
+          params.signature,
+          params.educationalDocuments.length > 0 ? params.educationalDocuments : null
+        );
+        return result;
+      } catch (error) {
+        throw error;
+      }
     },
     onSuccess: () => {
-      // Invalidate and refetch voters query to ensure dashboard updates
       queryClient.invalidateQueries({ queryKey: ['voters'] });
     },
   });

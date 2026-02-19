@@ -1,85 +1,46 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-19T21:01:34.350Z",
+  "generatedAt": "2026-02-19T22:34:46.209Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 3,
+    "total": 2,
+    "implemented": 2,
     "items": [
       {
-        "id": "REQ-51",
-        "summary": "Update the backend Voter type definition in backend/main.mo to make all fields optional except name and voterId. Fields that must become optional (accept null values) include: fatherHusbandName, address, gender, area, taluka, district, state, pincode, mobile, dob, caste, education, profession, office, politicalIdeology, comments, houseNumber, photo, signature, and educationalDocuments.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-52",
-        "summary": "Update the addVoter function in backend/main.mo to remove validation requirements for all fields except name and voterId. The function must accept and store voter records where only name and voterId are provided, with all other fields as null or empty.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-53",
-        "summary": "Update the VoterEntryForm component in frontend/src/components/VoterEntryForm.tsx to remove required validation from all fields except Name and Voter ID. All other form fields (Father/Husband name, Address, Gender, Area, Taluka, District, State, Pincode, Mobile no., DOB, Caste, Education, Profession, Office, Political ideology, Comments, House Number, Photo, Signature, Educational Documents) must remain visible on the form but become optional.",
+        "id": "REQ-66",
+        "summary": "Restore the main navigation menu in frontend/src/App.tsx that displays menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) for both mobile and desktop views. The navigation menu disappeared after Version 15 deployment while the header with 'Voter Management System' title and logout button remain visible.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/VoterEntryForm.tsx"
+          "frontend/src/App.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/VoterEntryForm.tsx"
+          "frontend/src/App.tsx"
         ]
       },
       {
-        "id": "REQ-54",
-        "summary": "Remove react-hook-form validation rules (required: true) from all optional fields in the VoterEntryForm component. Keep validation only for the name and voterId fields.",
+        "id": "REQ-67",
+        "summary": "Verify that the navigation menu rendering logic in frontend/src/App.tsx was not accidentally removed or conditionally hidden during the Version 15 deployment. Check for any CSS classes, conditional rendering, or display properties that may be causing the menu to be hidden.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/VoterEntryForm.tsx"
+          "frontend/src/App.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/components/VoterEntryForm.tsx"
-        ]
-      },
-      {
-        "id": "REQ-55",
-        "summary": "Verify that House Number field in the VoterEntryForm is optional and does not require a value for form submission, as confirmed by the user.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/VoterEntryForm.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/VoterEntryForm.tsx"
+          "frontend/src/App.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/AdvancedSearchFilters.tsx",
-    "frontend/src/components/LabelPrintView.tsx",
-    "frontend/src/components/VoterDetailModal.tsx",
-    "frontend/src/components/VoterEntryForm.tsx",
-    "frontend/src/components/VoterTable.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useAddVoter.ts",
-    "frontend/src/pages/Analytics.tsx",
-    "frontend/src/pages/LabelPrinting.tsx",
-    "frontend/src/pages/VoterList.tsx",
-    "frontend/src/utils/excelExport.ts",
+    "frontend/src/App.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

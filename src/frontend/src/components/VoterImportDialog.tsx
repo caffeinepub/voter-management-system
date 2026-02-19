@@ -58,14 +58,14 @@ export default function VoterImportDialog({ onClose }: VoterImportDialogProps) {
         return;
       }
 
-      const existingVoterIds = new Set(existingVoters?.map(v => v.voterId.toString()) || []);
+      const existingVoterIds = new Set(existingVoters?.map(v => v.voterId) || []);
       const existingMobiles = new Set(existingVoters?.map(v => v.mobileNo) || []);
 
       for (let i = 0; i < parsedVoters.length; i++) {
         const voter = parsedVoters[i];
         
         // Check if voter already exists
-        if (existingVoterIds.has(voter.voterId.toString()) || existingMobiles.has(voter.mobileNo)) {
+        if (existingVoterIds.has(voter.voterId) || existingMobiles.has(voter.mobileNo)) {
           skipped++;
           setProgress(((i + 1) / parsedVoters.length) * 100);
           continue;

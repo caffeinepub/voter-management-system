@@ -51,7 +51,7 @@ export interface Voter {
   'district' : [] | [string],
   'taluka' : [] | [string],
   'state' : [] | [string],
-  'voterId' : bigint,
+  'voterId' : string,
   'address' : [] | [string],
   'gender' : [] | [Gender],
   'politicalIdeology' : [] | [string],
@@ -90,7 +90,7 @@ export interface _SERVICE {
   'addVoter' : ActorMethod<
     [
       string,
-      bigint,
+      string,
       [] | [string],
       [] | [bigint],
       [] | [string],
@@ -124,6 +124,7 @@ export interface _SERVICE {
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getTasks' : ActorMethod<[], Array<Task>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'getVoterById' : ActorMethod<[string], [] | [Voter]>,
   'getVoters' : ActorMethod<[], Array<Voter>>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,

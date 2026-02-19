@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 27,
+  "projectStateVersion": 33,
   "summary": "Election voter management system with role-based access (Admin, Supervisor, Karyakarta), voter data entry with photo/document uploads, and incremental feature development planned",
   "architectural_notes": [
     "Internet Identity used for authentication (no OTP support on platform)",
@@ -18,7 +18,9 @@
     "Platform cannot support SMS/WhatsApp API integrations (Twilio, WhatsApp Business)",
     "OTP authentication not available - only Internet Identity supported",
     "External messaging features must be added post-deployment outside this platform",
-    "Advanced search feature previously implemented but missing from current UI - needs to be rebuilt and made visible on Voter List page"
+    "Advanced search feature previously implemented but missing from current UI - needs to be rebuilt and made visible on Voter List page",
+    "Save Voter button shows no visual feedback and fails silently with console error: 'Cannot convert [alphanumeric] to a BigInt' - backend voterId field type mismatch (expects Nat but receives Text)",
+    "Main navigation menu disappeared after Version 15 deployment - menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) not visible on both mobile and desktop views, though header and logout button remain visible"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -413,6 +415,78 @@
         "REQ-55"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-the-user-setup-page-role-selection-dropdown-frontend-src-components-profilesetupmodal-tsx-to-have-a-solid-white-background-instead-of-transparent-background-apply-bg-white-class-to-the-select-element",
+      "title": "Update the User Setup page role selection dropdown (frontend/src/components/ProfileSetupModal.tsx) to have a solid white background instead of transparent background. Apply bg-white class to the select element.",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-all-dropdown-fields-in-the-add-voter-form-frontend-src-components-voterentryform-tsx-to-have-solid-white-backgrounds-this-includes-gender-area-taluka-district-state-caste-education-profession-office-and-political-ideology-dropdowns-apply-bg-white-class-or-inline-style-to-ensure-all-select-elements-have-opaque-white-backgrounds",
+      "title": "Update ALL dropdown fields in the Add Voter form (frontend/src/components/VoterEntryForm.tsx) to have solid white backgrounds. This includes Gender, Area, Taluka, District, State, Caste, Education, Profession, Office, and Political ideology dropdowns. Apply bg-white class or inline style to ensure all select elements have opaque white backgrounds.",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-debug-and-fix-the-save-voter-button-click-handler-in-the-voterentryform-component-frontend-src-components-voterentryform-tsx-to-properly-submit-the-form-and-save-voter-data-the-button-currently-shows-no-response-after-clicking-verify-that-the-onsubmit-handler-is-properly-connected-the-useaddvoter-mutation-is-triggering-and-appropriate-loading-success-error-feedback-is-displayed-to-the-user",
+      "title": "Debug and fix the Save Voter button click handler in the VoterEntryForm component (frontend/src/components/VoterEntryForm.tsx) to properly submit the form and save voter data. The button currently shows no response after clicking. Verify that the onSubmit handler is properly connected, the useAddVoter mutation is triggering, and appropriate loading/success/error feedback is displayed to the user.",
+      "reqIds": [
+        "REQ-58"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-useaddvoter-mutation-hook-frontend-src-hooks-useaddvoter-ts-properly-handles-the-backend-actor-call-and-processes-the-response-add-error-logging-to-capture-any-failures-in-the-mutation-execution-or-backend-communication",
+      "title": "Verify that the useAddVoter mutation hook (frontend/src/hooks/useAddVoter.ts) properly handles the backend actor call and processes the response. Add error logging to capture any failures in the mutation execution or backend communication.",
+      "reqIds": [
+        "REQ-59"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-visual-feedback-to-the-save-voter-button-in-frontend-src-components-voterentryform-tsx-to-show-loading-state-disabled-button-with-spinner-or-text-change-when-form-submission-is-in-progress",
+      "title": "Add visual feedback to the Save Voter button in frontend/src/components/VoterEntryForm.tsx to show loading state (disabled button with spinner or text change) when form submission is in progress",
+      "reqIds": [
+        "REQ-63"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-success-notification-or-toast-message-in-frontend-src-components-voterentryform-tsx-that-appears-when-a-voter-is-successfully-saved-providing-clear-user-feedback-that-the-operation-completed",
+      "title": "Add success notification or toast message in frontend/src/components/VoterEntryForm.tsx that appears when a voter is successfully saved, providing clear user feedback that the operation completed",
+      "reqIds": [
+        "REQ-64"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-error-notification-or-toast-message-in-frontend-src-components-voterentryform-tsx-that-displays-when-voter-submission-fails-showing-the-error-message-to-the-user-instead-of-only-logging-to-console",
+      "title": "Add error notification or toast message in frontend/src/components/VoterEntryForm.tsx that displays when voter submission fails, showing the error message to the user instead of only logging to console",
+      "reqIds": [
+        "REQ-65"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-restore-the-main-navigation-menu-in-frontend-src-app-tsx-that-displays-menu-items-dashboard-add-voter-voter-list-label-printing-task-management-analytics-for-both-mobile-and-desktop-views-the-navigation-menu-disappeared-after-version-15-deployment-while-the-header-with-voter-management-system-title-and-logout-button-remain-visible",
+      "title": "Restore the main navigation menu in frontend/src/App.tsx that displays menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) for both mobile and desktop views. The navigation menu disappeared after Version 15 deployment while the header with 'Voter Management System' title and logout button remain visible.",
+      "reqIds": [
+        "REQ-66"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-navigation-menu-rendering-logic-in-frontend-src-app-tsx-was-not-accidentally-removed-or-conditionally-hidden-during-the-version-15-deployment-check-for-any-css-classes-conditional-rendering-or-display-properties-that-may-be-causing-the-menu-to-be-hidden",
+      "title": "Verify that the navigation menu rendering logic in frontend/src/App.tsx was not accidentally removed or conditionally hidden during the Version 15 deployment. Check for any CSS classes, conditional rendering, or display properties that may be causing the menu to be hidden.",
+      "reqIds": [
+        "REQ-67"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -623,6 +697,58 @@
       "reqIds": [
         "REQ-52"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Fix User Setup page role selection dropdown to have solid white background instead of transparent background",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Fix all dropdown fields in Add Voter form to have solid white backgrounds (Gender, Area, Taluka, District, State, Caste, Education, Profession, Office, Political ideology)",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Fix Save Voter button to properly respond and save voter data - currently shows no response after clicking",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Update the backend Voter type definition in backend/main.mo to change the voterId field from Nat (natural number) type to Text type to support alphanumeric values like 'bgdg46s', 'A123', '45B', 'H-12', etc.",
+      "reqIds": [
+        "REQ-60"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-35",
+      "summary": "Update the addVoter function in backend/main.mo to accept voterId as Text type instead of converting it to Nat, removing any BigInt conversion operations that cause the 'Cannot convert bgdg46s to a BigInt' error",
+      "reqIds": [
+        "REQ-61"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-36",
+      "summary": "Update all voter query functions (getVoters, getVoterById, etc.) in backend/main.mo to handle voterId as Text type for filtering and lookup operations",
+      "reqIds": [
+        "REQ-62"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-37",
+      "summary": "Fix missing main navigation menu (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) that disappeared after Version 15 deployment - menu items not visible in both mobile and desktop views while header and logout button remain visible",
+      "reqIds": [],
       "status": "pending"
     }
   ],

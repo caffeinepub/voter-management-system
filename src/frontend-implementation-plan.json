@@ -1,58 +1,45 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Make all voter fields optional except Name and Voter ID in frontend",
+  "title": "Restore missing main navigation menu after Version 15 deployment",
   "requirements": [
     {
-      "id": "REQ-53",
-      "summary": "Update VoterEntryForm to make all fields optional except Name and Voter ID while keeping all fields visible",
+      "id": "REQ-66",
+      "summary": "Restore the main navigation menu in App.tsx that displays all menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) for both mobile and desktop views",
       "acceptanceCriteria": [
-        "The Name field displays required indicator and prevents submission when empty",
-        "The Voter ID field displays required indicator and prevents submission when empty",
-        "All other fields do not show required indicators",
-        "Form can be successfully submitted with only Name and Voter ID filled",
-        "All fields remain visible in the form layout",
-        "No console errors appear when submitting a form with minimal data"
+        "Main navigation menu is visible on both mobile and desktop views",
+        "Menu displays all items: Dashboard, Add Voter, Voter List, Label Printing, Task Management, and Analytics",
+        "Navigation menu appears below or alongside the header with 'Voter Management System' title",
+        "Logout button remains visible and functional",
+        "Navigation links route correctly to their respective pages"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/VoterEntryForm.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Remove required validation from all form fields except Name and Voter ID. Update the register() calls for optional fields to remove the `required: true` validation rule. Ensure Name and Voter ID fields retain their required validation. Update field labels to remove required indicators (*) from optional fields. Verify that all fields remain visible in the form layout."
+          "description": "Restore the navigation menu JSX elements that render the six menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) with proper routing links. Ensure the navigation is positioned correctly within the authenticated layout below or alongside the header. Verify that no conditional rendering logic is preventing the menu from displaying when the user is authenticated. The navigation should be visible on both mobile (hamburger menu or vertical list) and desktop (horizontal menu bar) views."
         }
       ]
     },
     {
-      "id": "REQ-54",
-      "summary": "Remove react-hook-form validation rules from optional fields in VoterEntryForm",
+      "id": "REQ-67",
+      "summary": "Verify and fix any CSS classes, conditional rendering, or display properties that may be hiding the navigation menu",
       "acceptanceCriteria": [
-        "The form's register() calls for optional fields do not include required validation rules",
-        "The name field retains its required validation rule",
-        "The voterId field retains its required validation rule",
-        "Form validation errors only appear for Name and Voter ID when they are empty",
-        "Users can skip any optional field without triggering validation errors"
+        "Navigation menu JSX elements are present in the App.tsx component",
+        "No CSS classes with display:none or visibility:hidden are applied to navigation elements",
+        "Conditional rendering logic does not prevent menu from displaying when user is authenticated",
+        "Navigation menu is not positioned off-screen or with zero height/width"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/VoterEntryForm.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Review all register() calls in the form and remove `required: true` from optional fields including: fatherHusbandName, address, gender, area, taluka, district, state, pincode, mobileNo, dob, caste, education, profession, office, politicalIdeology, comments, houseNumber, photo, signature, and educationalDocuments. Keep required validation only on name and voterId fields. Ensure form submission works with minimal data."
-        }
-      ]
-    },
-    {
-      "id": "REQ-55",
-      "summary": "Verify House Number field is optional and accepts text input",
-      "acceptanceCriteria": [
-        "House Number field does not show a required indicator",
-        "Form submits successfully when House Number is left empty",
-        "House Number field accepts alphanumeric text input"
-      ],
-      "file_operations": [
+          "description": "Review and remove any CSS classes or inline styles that apply display:none, visibility:hidden, opacity:0, or off-screen positioning to the navigation menu elements. Check all conditional rendering logic (e.g., isAuthenticated checks, role-based conditions) to ensure they do not inadvertently hide the menu when a user is logged in. Verify that the navigation container has appropriate height, width, and display properties. If the menu uses responsive classes (e.g., hidden on mobile), ensure proper breakpoint classes are applied for both mobile and desktop visibility."
+        },
         {
-          "path": "frontend/src/components/VoterEntryForm.tsx",
+          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Verify that the House Number field does not have required validation, does not display a required indicator in its label, and accepts text input (not restricted to numbers only). Confirm the field can be left empty during form submission without triggering validation errors."
+          "description": "Review global CSS styles to ensure no rules are inadvertently hiding navigation elements. Check for any styles targeting navigation, nav, menu, or header elements that might apply display:none, visibility:hidden, or z-index issues. Remove or adjust any conflicting styles that prevent the navigation menu from being visible."
         }
       ]
     }
