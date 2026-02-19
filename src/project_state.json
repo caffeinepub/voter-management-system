@@ -1,0 +1,633 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 27,
+  "summary": "Election voter management system with role-based access (Admin, Supervisor, Karyakarta), voter data entry with photo/document uploads, and incremental feature development planned",
+  "architectural_notes": [
+    "Internet Identity used for authentication (no OTP support on platform)",
+    "SMS/WhatsApp features excluded - cannot be implemented on this platform",
+    "Incremental development approach: Phase 1 (auth, dashboard, voter entry, list view), Phase 2+ (label printing, search, tasks, analytics, export)",
+    "Voter data includes image uploads (photo, signature) and document uploads (educational docs)",
+    "Label printing designed for A4 sheets with 10 labels per page, auto-paginated",
+    "Label printing accessible via button in voter list view and separate menu item",
+    "Advanced search uses individual filter controls with dropdowns for categorical fields (Gender, Caste, Area, Taluka, District, State) and text inputs for name/mobile",
+    "Task management: text-based tasks with file attachments and completion timeline/deadline; statuses: Pending, In Progress, Completed",
+    "Voter List page rebuilt with simplified table showing only Name, Area, Mobile Number, and action buttons (View, Edit, Delete)",
+    "View button opens modal/detail view displaying complete voter information"
+  ],
+  "known_issues": [
+    "Platform cannot support SMS/WhatsApp API integrations (Twilio, WhatsApp Business)",
+    "OTP authentication not available - only Internet Identity supported",
+    "External messaging features must be added post-deployment outside this platform",
+    "Advanced search feature previously implemented but missing from current UI - needs to be rebuilt and made visible on Voter List page"
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-implement-internet-identity-authentication-system-with-role-based-access-control-supporting-three-distinct-user-roles-admin-supervisor-and-karyakarta-each-role-must-have-appropriate-permissions-enforced-at-the-backend-level",
+      "title": "Implement Internet Identity authentication system with role-based access control supporting three distinct user roles: Admin, Supervisor, and Karyakarta. Each role must have appropriate permissions enforced at the backend level.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-dashboard-page-that-displays-the-total-count-of-voters-in-the-system-with-basic-statistics-the-dashboard-should-serve-as-the-landing-page-after-authentication",
+      "title": "Create a dashboard page that displays the total count of voters in the system with basic statistics. The dashboard should serve as the landing page after authentication.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-comprehensive-voter-entry-form-with-all-specified-fields-sr-no-auto-generated-name-father-husband-name-address-gender-dropdown-area-landmark-taluka-district-state-pincode-mobile-no-dob-date-picker-caste-education-profession-office-place-of-work-political-ideology-and-comments-500-character-limit-with-counter",
+      "title": "Build a comprehensive voter entry form with all specified fields: Sr. no (auto-generated), Name, Father/Husband name, Address, Gender (dropdown), Area (Landmark), Taluka, District, State, Pincode, Mobile no., DOB (date picker), Caste, Education, Profession, Office (Place of work), Political ideology, and Comments (500 character limit with counter).",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-image-upload-functionality-to-the-voter-entry-form-for-voter-photo-jpeg-format-and-signature-jpeg-format-store-uploaded-images-in-the-backend-and-associate-them-with-voter-records",
+      "title": "Add image upload functionality to the voter entry form for Voter Photo (JPEG format) and Signature (JPEG format). Store uploaded images in the backend and associate them with voter records.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-document-upload-functionality-to-the-voter-entry-form-for-educational-documents-supporting-both-pdf-and-jpeg-formats-store-uploaded-documents-in-the-backend-and-associate-them-with-voter-records",
+      "title": "Add document upload functionality to the voter entry form for Educational Documents supporting both PDF and JPEG formats. Store uploaded documents in the backend and associate them with voter records.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-simple-list-view-page-that-displays-all-entered-voters-in-a-table-format-showing-key-fields-sr-no-name-mobile-no-area-taluka-gender-and-caste-the-table-should-load-voter-data-from-the-backend",
+      "title": "Create a simple list view page that displays all entered voters in a table format showing key fields: Sr. no, Name, Mobile no., Area, Taluka, Gender, and Caste. The table should load voter data from the backend.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-house-number-field-number-type-and-voter-id-field-number-type-to-the-voter-entry-form-both-fields-must-be-stored-in-the-backend-voter-record-and-be-required-during-submission",
+      "title": "Add House Number field (number type) and Voter ID field (number type) to the voter entry form. Both fields must be stored in the backend voter record and be required during submission.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-print-labels-button-to-the-voter-list-view-page-that-opens-a-label-printing-interface-showing-selected-voter-records-formatted-for-printing",
+      "title": "Add a 'Print Labels' button to the voter list view page that opens a label printing interface showing selected voter records formatted for printing.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-separate-label-printing-menu-item-in-the-main-navigation-that-provides-a-dedicated-interface-for-generating-and-printing-voter-labels-with-10-labels-per-a4-page-and-automatic-pagination",
+      "title": "Create a separate 'Label Printing' menu item in the main navigation that provides a dedicated interface for generating and printing voter labels with 10 labels per A4 page and automatic pagination.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-advanced-search-functionality-with-individual-filter-controls-and-dropdowns-for-each-voter-field-including-gender-caste-area-taluka-district-state-and-text-search-fields-for-name-mobile-number-etc-all-filters-must-work-together-to-narrow-down-results",
+      "title": "Implement advanced search functionality with individual filter controls and dropdowns for each voter field including Gender, Caste, Area, Taluka, District, State, and text search fields for Name, Mobile Number, etc. All filters must work together to narrow down results.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-task-management-system-where-admin-users-can-assign-text-based-tasks-with-attachments-and-deadlines-to-supervisor-users-tasks-must-include-status-tracking-with-values-pending-in-progress-complete",
+      "title": "Create a task management system where Admin users can assign text-based tasks with attachments and deadlines to Supervisor users. Tasks must include status tracking with values: Pending, In Progress, Complete.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-extend-task-management-to-allow-supervisor-users-to-assign-text-based-tasks-with-attachments-and-deadlines-to-karyakarta-users-with-the-same-status-tracking-pending-in-progress-complete",
+      "title": "Extend task management to allow Supervisor users to assign text-based tasks with attachments and deadlines to Karyakarta users with the same status tracking (Pending, In Progress, Complete).",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-task-management-page-with-navigation-menu-item-that-displays-task-lists-filtered-by-role-admin-sees-all-tasks-supervisor-sees-tasks-assigned-to-them-and-tasks-they-created-karyakarta-sees-only-tasks-assigned-to-them",
+      "title": "Create a Task Management page with navigation menu item that displays task lists filtered by role: Admin sees all tasks, Supervisor sees tasks assigned to them and tasks they created, Karyakarta sees only tasks assigned to them.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-dashboard-page-to-properly-load-and-display-voter-statistics-when-voters-exist-in-the-system-the-page-currently-shows-blank-after-adding-the-first-voter",
+      "title": "Fix the Dashboard page to properly load and display voter statistics when voters exist in the system. The page currently shows blank after adding the first voter.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-comprehensive-error-handling-and-loading-states-to-the-dashboard-component-to-prevent-blank-screens-when-data-loading-fails-or-is-in-progress",
+      "title": "Add comprehensive error handling and loading states to the Dashboard component to prevent blank screens when data loading fails or is in progress.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-usegetvoters-hook-properly-invalidates-and-refetches-data-when-navigating-to-the-dashboard-page-after-adding-a-voter-from-the-voter-entry-page",
+      "title": "Ensure the useGetVoters hook properly invalidates and refetches data when navigating to the Dashboard page after adding a voter from the Voter Entry page.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-voter-list-page-frontend-src-pages-voterlist-tsx-to-properly-load-and-display-all-voter-records-in-the-table-view-the-page-is-currently-rendering-completely-blank-despite-voters-existing-in-the-system",
+      "title": "Fix the Voter List page (frontend/src/pages/VoterList.tsx) to properly load and display all voter records in the table view. The page is currently rendering completely blank despite voters existing in the system.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-comprehensive-error-handling-to-the-voter-list-page-to-display-error-messages-when-voter-data-fails-to-load-preventing-blank-screens-and-providing-clear-feedback-to-users",
+      "title": "Add comprehensive error handling to the Voter List page to display error messages when voter data fails to load, preventing blank screens and providing clear feedback to users.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-usegetvoters-hook-properly-refetches-data-when-the-voter-list-page-is-mounted-or-navigated-to-so-that-newly-added-voters-appear-immediately-without-requiring-a-page-refresh",
+      "title": "Ensure the useGetVoters hook properly refetches data when the Voter List page is mounted or navigated to, so that newly added voters appear immediately without requiring a page refresh.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-debug-and-fix-the-voter-list-page-frontend-src-pages-voterlist-tsx-to-identify-why-the-page-continues-to-render-completely-blank-despite-multiple-previous-fix-attempts-investigate-the-votertable-component-data-flow-from-usegetvoters-hook-and-any-console-errors-or-rendering-conditions-that-may-be-preventing-the-table-from-displaying-voter-records",
+      "title": "Debug and fix the Voter List page (frontend/src/pages/VoterList.tsx) to identify why the page continues to render completely blank despite multiple previous fix attempts. Investigate the VoterTable component, data flow from useGetVoters hook, and any console errors or rendering conditions that may be preventing the table from displaying voter records.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-defensive-null-undefined-checks-and-fallback-rendering-in-the-voterlist-page-component-to-ensure-that-even-if-data-is-malformed-or-partially-loaded-the-page-structure-remains-visible-with-appropriate-status-messages-instead-of-rendering-completely-blank",
+      "title": "Add defensive null/undefined checks and fallback rendering in the VoterList page component to ensure that even if data is malformed or partially loaded, the page structure remains visible with appropriate status messages instead of rendering completely blank.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-votertable-component-in-frontend-src-components-votertable-tsx-properly-handles-empty-arrays-loading-states-and-renders-table-structure-even-when-no-voter-data-is-available-ensuring-it-does-not-cause-the-parent-page-to-render-blank",
+      "title": "Verify that the VoterTable component in frontend/src/components/VoterTable.tsx properly handles empty arrays, loading states, and renders table structure even when no voter data is available, ensuring it does not cause the parent page to render blank.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-entire-voter-list-page-frontend-src-pages-voterlist-tsx-with-a-clean-simplified-implementation-that-displays-a-basic-table-with-only-four-columns-name-area-mobile-number-and-actions",
+      "title": "Replace the entire Voter List page (frontend/src/pages/VoterList.tsx) with a clean, simplified implementation that displays a basic table with only four columns: Name, Area, Mobile Number, and Actions.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-three-action-buttons-in-the-actions-column-for-each-voter-row-view-to-show-complete-voter-details-edit-to-modify-voter-data-and-delete-to-remove-voter-record",
+      "title": "Add three action buttons in the Actions column for each voter row: View (to show complete voter details), Edit (to modify voter data), and Delete (to remove voter record).",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-voter-detail-modal-component-that-displays-all-complete-voter-information-when-the-view-button-is-clicked-including-all-fields-from-the-voter-record-sr-no-name-father-husband-name-address-gender-area-taluka-district-state-pincode-mobile-dob-caste-education-profession-office-political-ideology-comments-house-number-voter-id-photo-signature-educational-documents",
+      "title": "Create a voter detail modal component that displays all complete voter information when the View button is clicked, including all fields from the voter record (Sr. no, Name, Father/Husband name, Address, Gender, Area, Taluka, District, State, Pincode, Mobile, DOB, Caste, Education, Profession, Office, Political ideology, Comments, House Number, Voter ID, Photo, Signature, Educational Documents).",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-votertable-component-frontend-src-components-votertable-tsx-and-advancedsearchfilters-component-frontend-src-components-advancedsearchfilters-tsx-references-from-the-simplified-voter-list-page-to-eliminate-potential-sources-of-the-blank-page-rendering-issue",
+      "title": "Remove the VoterTable component (frontend/src/components/VoterTable.tsx) and AdvancedSearchFilters component (frontend/src/components/AdvancedSearchFilters.tsx) references from the simplified Voter List page to eliminate potential sources of the blank page rendering issue.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-debug-and-fix-the-internet-identity-authentication-flow-in-frontend-src-hooks-usegetcalleruserprofile-ts-to-ensure-the-profile-loading-completes-successfully-after-login-and-does-not-remain-stuck-in-loading-state-indefinitely",
+      "title": "Debug and fix the Internet Identity authentication flow in frontend/src/hooks/useGetCallerUserProfile.ts to ensure the profile loading completes successfully after login and does not remain stuck in loading state indefinitely",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-comprehensive-error-handling-and-timeout-logic-to-the-usegetcalleruserprofile-hook-to-prevent-indefinite-hanging-when-the-backend-actor-fails-to-respond-or-returns-unexpected-data",
+      "title": "Add comprehensive error handling and timeout logic to the useGetCallerUserProfile hook to prevent indefinite hanging when the backend actor fails to respond or returns unexpected data",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-useactor-hook-in-frontend-src-hooks-useactor-ts-properly-initializes-the-authenticated-backend-actor-after-internet-identity-login-completes-ensuring-the-actor-is-ready-before-profile-queries-execute",
+      "title": "Verify that the useActor hook in frontend/src/hooks/useActor.ts properly initializes the authenticated backend actor after Internet Identity login completes, ensuring the actor is ready before profile queries execute",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-defensive-null-checks-and-loading-state-validation-in-frontend-src-app-tsx-to-ensure-the-authentication-flow-properly-transitions-through-states-unauthenticated-authenticating-loading-profile-profile-loaded-setup-required",
+      "title": "Add defensive null checks and loading state validation in frontend/src/App.tsx to ensure the authentication flow properly transitions through states: unauthenticated -> authenticating -> loading profile -> profile loaded/setup required",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-usegetcalleruserprofile-hook-in-frontend-src-hooks-usegetcalleruserprofile-ts-to-detect-when-the-actor-is-stuck-in-an-initializing-state-and-trigger-a-forced-re-initialization-after-5-seconds",
+      "title": "Enhance useGetCallerUserProfile hook in frontend/src/hooks/useGetCallerUserProfile.ts to detect when the actor is stuck in an initializing state and trigger a forced re-initialization after 5 seconds",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-manual-retry-connection-button-in-frontend-src-app-tsx-that-appears-when-profile-loading-fails-or-times-out-allowing-users-to-manually-retry-the-actor-initialization-and-profile-fetch",
+      "title": "Add a manual 'Retry Connection' button in frontend/src/App.tsx that appears when profile loading fails or times out, allowing users to manually retry the actor initialization and profile fetch",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-error-logging-in-the-authentication-flow-to-capture-and-display-the-specific-stage-where-initialization-fails-identity-obtained-actor-creating-actor-ready-profile-fetching-with-timestamps",
+      "title": "Enhance error logging in the authentication flow to capture and display the specific stage where initialization fails (identity obtained, actor creating, actor ready, profile fetching) with timestamps",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-fallback-logic-in-frontend-src-app-tsx-that-automatically-logs-out-and-clears-all-authentication-state-if-profile-loading-remains-stuck-for-more-than-30-seconds-allowing-user-to-restart-the-login-flow",
+      "title": "Add fallback logic in frontend/src/App.tsx that automatically logs out and clears all authentication state if profile loading remains stuck for more than 30 seconds, allowing user to restart the login flow",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-excel-export-functionality-to-the-voter-list-page-that-exports-all-voter-records-to-a-downloadable-xlsx-file-including-all-voter-fields-sr-no-name-father-husband-name-address-gender-area-taluka-district-state-pincode-mobile-dob-caste-education-profession-office-political-ideology-comments-house-number-and-voter-id",
+      "title": "Add Excel export functionality to the Voter List page that exports all voter records to a downloadable .xlsx file including all voter fields: Sr. no, Name, Father/Husband name, Address, Gender, Area, Taluka, District, State, Pincode, Mobile, DOB, Caste, Education, Profession, Office, Political ideology, Comments, House Number, and Voter ID",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-excel-import-functionality-to-the-voter-list-page-that-allows-uploading-a-xlsx-file-to-import-voter-records-the-import-must-only-add-new-voters-and-never-update-existing-voter-records-validate-that-required-fields-are-present-before-importing-each-row",
+      "title": "Add Excel import functionality to the Voter List page that allows uploading a .xlsx file to import voter records. The import must only add new voters and never update existing voter records. Validate that required fields are present before importing each row",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-an-analytics-page-accessible-from-the-main-navigation-that-displays-distribution-charts-for-caste-distribution-education-levels-office-profession-breakdown-area-wise-voter-counts-and-gender-distribution-use-bar-charts-or-pie-charts-to-visualize-the-data",
+      "title": "Create an Analytics page accessible from the main navigation that displays distribution charts for: Caste distribution, Education levels, Office/Profession breakdown, Area-wise voter counts, and Gender distribution. Use bar charts or pie charts to visualize the data",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-rebuild-the-advanced-search-and-filters-ui-on-the-voter-list-page-with-a-prominent-search-bar-at-the-top-and-filter-dropdowns-for-gender-caste-area-taluka-district-and-state-add-text-search-fields-for-name-mobile-number-house-number-and-voter-id-all-filters-must-work-together-to-narrow-down-the-displayed-voter-list-in-real-time",
+      "title": "Rebuild the advanced search and filters UI on the Voter List page with a prominent search bar at the top and filter dropdowns for Gender, Caste, Area, Taluka, District, and State. Add text search fields for Name, Mobile Number, House Number, and Voter ID. All filters must work together to narrow down the displayed voter list in real-time",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-login-popup-hamburger-menu-voter-details-popup-and-create-task-popup-to-use-solid-white-backgrounds-instead-of-transparent-backgrounds",
+      "title": "Fix the login popup, hamburger menu, voter details popup, and create task popup to use solid white backgrounds instead of transparent backgrounds",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-header-background-color-and-all-button-colors-throughout-the-application-to-002080-dark-blue",
+      "title": "Change the header background color and all button colors throughout the application to #002080 (dark blue)",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-logout-button-color-to-white-in-the-header-component-frontend-src-app-tsx-the-button-currently-uses-the-primary-002080-color-and-should-be-updated-to-display-white-text-or-background-for-better-visibility-against-the-dark-blue-header",
+      "title": "Change the logout button color to white in the header component (frontend/src/App.tsx). The button currently uses the primary #002080 color and should be updated to display white text or background for better visibility against the dark blue header.",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-reduce-the-font-size-of-the-voter-management-system-header-text-in-mobile-view-so-it-fits-properly-within-the-header-ribbon-without-overflow-or-wrapping-apply-responsive-text-sizing-using-tailwind-css-breakpoints-e-g-text-xl-on-mobile-text-2xl-on-desktop-in-frontend-src-app-tsx",
+      "title": "Reduce the font size of the 'Voter Management System' header text in mobile view so it fits properly within the header ribbon without overflow or wrapping. Apply responsive text sizing using Tailwind CSS breakpoints (e.g., text-xl on mobile, text-2xl on desktop) in frontend/src/App.tsx.",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-add-voter-form-frontend-src-components-voterentryform-tsx-to-make-only-name-and-voter-id-fields-required-for-form-submission-all-other-fields-father-husband-name-address-gender-area-taluka-district-state-pincode-mobile-no-dob-caste-education-profession-office-political-ideology-comments-house-number-photo-signature-educational-documents-must-become-optional-with-validation-removed",
+      "title": "Update the Add Voter form (frontend/src/components/VoterEntryForm.tsx) to make only Name and Voter ID fields required for form submission. All other fields (Father/Husband name, Address, Gender, Area, Taluka, District, State, Pincode, Mobile no., DOB, Caste, Education, Profession, Office, Political ideology, Comments, House Number, Photo, Signature, Educational Documents) must become optional with validation removed.",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-house-number-and-voter-id-fields-in-the-add-voter-form-frontend-src-components-voterentryform-tsx-from-number-input-type-to-text-input-type-to-accept-alphanumeric-values-users-must-be-able-to-enter-any-combination-of-letters-and-numbers-such-as-a123-45b-h-12-etc",
+      "title": "Change the House Number and Voter ID fields in the Add Voter form (frontend/src/components/VoterEntryForm.tsx) from number input type to text input type to accept alphanumeric values. Users must be able to enter any combination of letters and numbers such as 'A123', '45B', 'H-12', etc.",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-improve-the-visual-styling-and-format-of-the-dob-date-of-birth-date-picker-in-the-add-voter-form-frontend-src-components-voterentryform-tsx-update-the-calendar-ui-to-use-a-cleaner-more-modern-appearance-with-better-visibility-and-user-friendly-date-selection-interface",
+      "title": "Improve the visual styling and format of the DOB (Date of Birth) date picker in the Add Voter form (frontend/src/components/VoterEntryForm.tsx). Update the calendar UI to use a cleaner, more modern appearance with better visibility and user-friendly date selection interface.",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-reduce-the-font-size-of-the-add-new-voter-heading-text-at-the-top-of-the-add-voter-page-frontend-src-pages-voterentry-tsx-the-heading-should-be-smaller-and-more-proportional-to-the-page-layout-while-remaining-clearly-readable",
+      "title": "Reduce the font size of the 'Add New Voter' heading text at the top of the Add Voter page (frontend/src/pages/VoterEntry.tsx). The heading should be smaller and more proportional to the page layout while remaining clearly readable.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-voterentryform-component-in-frontend-src-components-voterentryform-tsx-to-remove-required-validation-from-all-fields-except-name-and-voter-id-all-other-form-fields-father-husband-name-address-gender-area-taluka-district-state-pincode-mobile-no-dob-caste-education-profession-office-political-ideology-comments-house-number-photo-signature-educational-documents-must-remain-visible-on-the-form-but-become-optional",
+      "title": "Update the VoterEntryForm component in frontend/src/components/VoterEntryForm.tsx to remove required validation from all fields except Name and Voter ID. All other form fields (Father/Husband name, Address, Gender, Area, Taluka, District, State, Pincode, Mobile no., DOB, Caste, Education, Profession, Office, Political ideology, Comments, House Number, Photo, Signature, Educational Documents) must remain visible on the form but become optional.",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-react-hook-form-validation-rules-required-true-from-all-optional-fields-in-the-voterentryform-component-keep-validation-only-for-the-name-and-voterid-fields",
+      "title": "Remove react-hook-form validation rules (required: true) from all optional fields in the VoterEntryForm component. Keep validation only for the name and voterId fields.",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-house-number-field-in-the-voterentryform-is-optional-and-does-not-require-a-value-for-form-submission-as-confirmed-by-the-user",
+      "title": "Verify that House Number field in the VoterEntryForm is optional and does not require a value for form submission, as confirmed by the user.",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Authentication with Internet Identity supporting 3 roles: Admin, Supervisor, Karyakarta",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Dashboard displaying total voter count and quick statistics",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Complete voter entry form with all fields including Sr. no, Name, Father/Husband name, Address, Gender, Area, Taluka, District, State, Pincode, Mobile, DOB, Caste, Education, Profession, Office, Political ideology, and Comments (500 chars)",
+      "reqIds": [],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Image upload support for voter photo and signature (JPEG)",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Document upload for educational documents (PDF/JPEG)",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Simple list view displaying all entered voters in a table",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "in_progress"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Label printing feature with A4 preview, 10 labels per page showing Name, House Number, Area, Taluka, District, State, Pincode with auto-pagination",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Advanced search and filter across all voter form fields",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Task management workflow: Admin assigns to Supervisor, Supervisor assigns to Karyakarta with status tracking",
+      "reqIds": [
+        "AR-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Analytics dashboard with charts for gender, age groups, caste, area, booth summaries",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Add House Number and Voter ID number fields to voter entry form",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Add timeout protection (10 seconds) to the useActor hook in frontend/src/hooks/useActor.ts to prevent indefinite waiting when the backend actor fails to initialize after Internet Identity authentication completes",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Add retry mechanism with exponential backoff to the useActor hook that automatically retries actor initialization up to 3 times if the first attempt fails or times out",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Export voter list to Excel format",
+      "reqIds": [
+        "AR-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Import voter list from Excel format (only adds new voters, no updates to existing)",
+      "reqIds": [
+        "AR-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Analysis dashboard with distribution charts for Caste, Education, Office/Profession, Area, and Gender",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Fix transparent backgrounds to solid white for login popup, hamburger menu, voter details popup, and create task popup",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Change header and all button colors to #002080",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Change logout button color to white",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Reduce header text size in mobile view so 'Voter Management System' fits within header ribbon",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Make only Name and Voter ID compulsory fields in Add Voter form; all other fields should be optional (both frontend validation and backend)",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Change House Number and Voter ID fields to accept alphanumeric input (any combination of letters and numbers)",
+      "reqIds": [
+        "AR-3",
+        "AR-11"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Improve calendar UI format for DOB date picker in Add Voter form",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Reduce size of 'Add New Voter' heading text at the top of the Add Voter page",
+      "reqIds": [
+        "AR-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Update the backend Voter type definition and addVoter function in backend/main.mo to make only name and voterId required fields. All other voter fields (fatherHusbandName, address, gender, area, taluka, district, state, pincode, mobile, dob, caste, education, profession, office, politicalIdeology, comments, houseNumber, photo, signature, educationalDocuments) must accept null/optional values and allow voter records to be created without them.",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Update the backend Voter type definition in backend/main.mo to change houseNumber and voterId fields from Nat (number) type to Text type to support storing alphanumeric values like 'A123', '45B', 'H-12', etc.",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Update the backend Voter type definition in backend/main.mo to make all fields optional except name and voterId. Fields that must become optional (accept null values) include: fatherHusbandName, address, gender, area, taluka, district, state, pincode, mobile, dob, caste, education, profession, office, politicalIdeology, comments, houseNumber, photo, signature, and educationalDocuments.",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Update the addVoter function in backend/main.mo to remove validation requirements for all fields except name and voterId. The function must accept and store voter records where only name and voterId are provided, with all other fields as null or empty.",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Voter Management System",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

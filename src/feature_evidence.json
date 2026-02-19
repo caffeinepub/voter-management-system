@@ -1,0 +1,65 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-update-the-voterentryform-component-in-frontend-src-components-voterentryform-tsx-to-remove-required-validation-from-all-fields-except-name-and-voter-id-all-other-form-fields-father-husband-name-address-gender-area-taluka-district-state-pincode-mobile-no-dob-caste-education-profession-office-political-ideology-comments-house-number-photo-signature-educational-documents-must-remain-visible-on-the-form-but-become-optional",
+      "featureTitle": "Update the VoterEntryForm component in frontend/src/components/VoterEntryForm.tsx to remove required validation from all fields except Name and Voter ID. All other form fields (Father/Husband name, Address, Gender, Area, Taluka, District, State, Pincode, Mobile no., DOB, Caste, Education, Profession, Office, Political ideology, Comments, House Number, Photo, Signature, Educational Documents) must remain visible on the form but become optional.",
+      "files": [
+        "frontend/src/components/VoterEntryForm.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-53"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-remove-react-hook-form-validation-rules-required-true-from-all-optional-fields-in-the-voterentryform-component-keep-validation-only-for-the-name-and-voterid-fields",
+      "featureTitle": "Remove react-hook-form validation rules (required: true) from all optional fields in the VoterEntryForm component. Keep validation only for the name and voterId fields.",
+      "files": [
+        "frontend/src/components/VoterEntryForm.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-54"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-verify-that-house-number-field-in-the-voterentryform-is-optional-and-does-not-require-a-value-for-form-submission-as-confirmed-by-the-user",
+      "featureTitle": "Verify that House Number field in the VoterEntryForm is optional and does not require a value for form submission, as confirmed by the user.",
+      "files": [
+        "frontend/src/components/VoterEntryForm.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-55"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
