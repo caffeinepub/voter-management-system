@@ -1,45 +1,59 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Restore missing main navigation menu after Version 15 deployment",
+  "title": "Fix 'Detected both agent and agentOptions' error blocking actor initialization after Internet Identity login",
   "requirements": [
     {
-      "id": "REQ-66",
-      "summary": "Restore the main navigation menu in App.tsx that displays all menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) for both mobile and desktop views",
+      "id": "REQ-85",
+      "summary": "Fix the 'Detected both agent and agentOptions' error in useActor hook by ensuring only the agent parameter is passed to createActor",
       "acceptanceCriteria": [
-        "Main navigation menu is visible on both mobile and desktop views",
-        "Menu displays all items: Dashboard, Add Voter, Voter List, Label Printing, Task Management, and Analytics",
-        "Navigation menu appears below or alongside the header with 'Voter Management System' title",
-        "Logout button remains visible and functional",
-        "Navigation links route correctly to their respective pages"
+        "The 'Detected both agent and agentOptions' console error no longer appears after Internet Identity login",
+        "The useActor hook successfully initializes the backend actor without conflicts",
+        "Actor initialization completes and transitions from 'Initializing actor' to 'Waiting for actor' to 'Actor ready' without hanging"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/hooks/useActor.ts",
           "operation": "modify",
-          "description": "Restore the navigation menu JSX elements that render the six menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) with proper routing links. Ensure the navigation is positioned correctly within the authenticated layout below or alongside the header. Verify that no conditional rendering logic is preventing the menu from displaying when the user is authenticated. The navigation should be visible on both mobile (hamburger menu or vertical list) and desktop (horizontal menu bar) views."
+          "description": "Remove the conflicting agentOptions parameter from the createActor call. Ensure that when an authenticated agent is available from Internet Identity, only the agent parameter is passed to createActor, not both agent and agentOptions simultaneously. The hook should check if an agent exists and pass it exclusively, or fall back to agentOptions only when no agent is present (anonymous case)."
         }
       ]
     },
     {
-      "id": "REQ-67",
-      "summary": "Verify and fix any CSS classes, conditional rendering, or display properties that may be hiding the navigation menu",
+      "id": "REQ-86",
+      "summary": "Add defensive error handling to the useActor hook to catch actor initialization failures and return clear error states",
       "acceptanceCriteria": [
-        "Navigation menu JSX elements are present in the App.tsx component",
-        "No CSS classes with display:none or visibility:hidden are applied to navigation elements",
-        "Conditional rendering logic does not prevent menu from displaying when user is authenticated",
-        "Navigation menu is not positioned off-screen or with zero height/width"
+        "Actor initialization errors are caught and logged to console with descriptive messages",
+        "The useActor hook returns an error state when initialization fails",
+        "The authentication flow does not hang indefinitely when actor creation fails"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useActor.ts",
+          "operation": "modify",
+          "description": "Wrap the createActor call in a try-catch block to handle initialization errors gracefully. Log any errors to console with timestamps and descriptive messages. Return an error state from the hook that consumers can check. Ensure that if createActor throws an error or fails, the error is surfaced to the component layer instead of leaving the actor in an indefinite 'Waiting for actor' state."
+        }
+      ]
+    },
+    {
+      "id": "REQ-87",
+      "summary": "Verify that the actor initialization properly completes after Internet Identity login by ensuring the authentication flow transitions through all states correctly",
+      "acceptanceCriteria": [
+        "Console logs show the complete authentication state sequence without gaps",
+        "The application successfully transitions from 'Waiting for actor' to 'Actor ready' within 10 seconds",
+        "Profile loading begins immediately after actor initialization completes",
+        "The Dashboard or Profile Setup page displays after successful authentication"
       ],
       "file_operations": [
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Review and remove any CSS classes or inline styles that apply display:none, visibility:hidden, opacity:0, or off-screen positioning to the navigation menu elements. Check all conditional rendering logic (e.g., isAuthenticated checks, role-based conditions) to ensure they do not inadvertently hide the menu when a user is logged in. Verify that the navigation container has appropriate height, width, and display properties. If the menu uses responsive classes (e.g., hidden on mobile), ensure proper breakpoint classes are applied for both mobile and desktop visibility."
+          "description": "Add comprehensive console logging to track the authentication state sequence: authenticated -> initializing actor -> actor ready -> loading profile -> profile loaded. Ensure the existing stage tracking includes timestamps for each transition. Verify that the actor error state from useActor is checked and handled appropriately in the authentication flow, preventing indefinite hangs at 'Waiting for actor'. Preserve the existing 30-second timeout mechanism already implemented."
         },
         {
-          "path": "frontend/src/index.css",
+          "path": "frontend/src/hooks/useGetCallerUserProfile.ts",
           "operation": "modify",
-          "description": "Review global CSS styles to ensure no rules are inadvertently hiding navigation elements. Check for any styles targeting navigation, nav, menu, or header elements that might apply display:none, visibility:hidden, or z-index issues. Remove or adjust any conflicting styles that prevent the navigation menu from being visible."
+          "description": "Add console logging at the start and end of the profile fetch operation to confirm when profile loading begins and completes. Log the actor availability state and any errors that occur during profile fetching. Ensure the hook properly reflects the actor dependency state so that profile loading only starts after actor initialization is complete."
         }
       ]
     }

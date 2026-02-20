@@ -1,45 +1,4 @@
 {
   "kind": "feature_evidence_report",
-  "features": [
-    {
-      "featureId": "feature-restore-the-main-navigation-menu-in-frontend-src-app-tsx-that-displays-menu-items-dashboard-add-voter-voter-list-label-printing-task-management-analytics-for-both-mobile-and-desktop-views-the-navigation-menu-disappeared-after-version-15-deployment-while-the-header-with-voter-management-system-title-and-logout-button-remain-visible",
-      "featureTitle": "Restore the main navigation menu in frontend/src/App.tsx that displays menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) for both mobile and desktop views. The navigation menu disappeared after Version 15 deployment while the header with 'Voter Management System' title and logout button remain visible.",
-      "files": [
-        "frontend/src/App.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-66"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-verify-that-the-navigation-menu-rendering-logic-in-frontend-src-app-tsx-was-not-accidentally-removed-or-conditionally-hidden-during-the-version-15-deployment-check-for-any-css-classes-conditional-rendering-or-display-properties-that-may-be-causing-the-menu-to-be-hidden",
-      "featureTitle": "Verify that the navigation menu rendering logic in frontend/src/App.tsx was not accidentally removed or conditionally hidden during the Version 15 deployment. Check for any CSS classes, conditional rendering, or display properties that may be causing the menu to be hidden.",
-      "files": [
-        "frontend/src/App.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-67"
-      ],
-      "confidence": "high"
-    }
-  ]
+  "features": []
 }

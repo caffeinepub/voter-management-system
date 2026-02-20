@@ -30,7 +30,8 @@ export function useGetVoters() {
     },
     enabled: !!actor && !actorFetching,
     retry: 2,
-    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
 
   // Debug logging for query state changes

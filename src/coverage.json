@@ -1,37 +1,42 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-19T22:34:46.209Z",
+  "generatedAt": "2026-02-20T00:22:04.161Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 3,
+    "implemented": 0,
     "items": [
       {
-        "id": "REQ-66",
-        "summary": "Restore the main navigation menu in frontend/src/App.tsx that displays menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) for both mobile and desktop views. The navigation menu disappeared after Version 15 deployment while the header with 'Voter Management System' title and logout button remain visible.",
-        "status": "implemented",
+        "id": "REQ-85",
+        "summary": "Fix the 'Detected both agent and agentOptions passed to createActor' error in the useActor hook (frontend/src/hooks/useActor.ts) by ensuring that only the agent parameter is passed to createActor, not both agent and agentOptions simultaneously. Remove or restructure the conflicting configuration that causes this initialization error.",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/src/App.tsx"
+          "frontend/src/hooks/useActor.ts"
         ],
-        "matchedFiles": [
-          "frontend/src/App.tsx"
-        ]
+        "matchedFiles": []
       },
       {
-        "id": "REQ-67",
-        "summary": "Verify that the navigation menu rendering logic in frontend/src/App.tsx was not accidentally removed or conditionally hidden during the Version 15 deployment. Check for any CSS classes, conditional rendering, or display properties that may be causing the menu to be hidden.",
-        "status": "implemented",
+        "id": "REQ-86",
+        "summary": "Add defensive error handling to the useActor hook (frontend/src/hooks/useActor.ts) to catch actor initialization failures and return clear error states. Ensure that if createActor throws an error or fails, the error is logged with timestamp and the actor state reflects the failure instead of hanging indefinitely.",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/hooks/useActor.ts"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-87",
+        "summary": "Verify that the actor initialization properly completes after Internet Identity login by ensuring the authentication flow in frontend/src/App.tsx transitions through all states correctly: authenticated -> initializing actor -> actor ready -> loading profile -> profile loaded. Add console logging to confirm each state transition occurs without hanging at 'Waiting for actor'.",
+        "status": "missing",
         "plannedFiles": [
           "frontend/src/App.tsx",
-          "frontend/src/index.css"
+          "frontend/src/hooks/useGetCallerUserProfile.ts"
         ],
-        "matchedFiles": [
-          "frontend/src/App.tsx"
-        ]
+        "matchedFiles": []
       }
     ]
   },
@@ -40,7 +45,6 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

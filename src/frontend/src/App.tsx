@@ -2,6 +2,7 @@ import { RouterProvider, createRouter, createRoute, createRootRoute, Outlet, Lin
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useInternetIdentity } from './hooks/useInternetIdentity';
 import { useGetCallerUserProfile } from './hooks/useGetCallerUserProfile';
+import { useActor } from './hooks/useActor';
 import LoginButton from './components/LoginButton';
 import ProfileSetupModal from './components/ProfileSetupModal';
 import AccessDeniedScreen from './components/AccessDeniedScreen';
@@ -13,10 +14,20 @@ import TaskManagement from './pages/TaskManagement';
 import Analytics from './pages/Analytics';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from 'next-themes';
-import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { Menu, X, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 300000, // 5 minutes
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    },
+  },
+});
 
 function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -113,17 +124,93 @@ function Layout() {
 }
 
 function AppContent() {
-  const { identity, isInitializing } = useInternetIdentity();
-  const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
+  const { identity, isInitializing, clear, login } = useInternetIdentity();
+  const actorResult = useActor();
+  const { data: userProfile, isLoading: profileLoading, isFetched, error: profileError } = useGetCallerUserProfile();
+  const [authTimeout, setAuthTimeout] = useState(false);
+  const [currentStage, setCurrentStage] = useState<string>('initializing');
 
   const isAuthenticated = !!identity;
+  const actor = actorResult.actor;
+  const actorFetching = actorResult.isFetching;
+  const actorIsError = (actorResult as any).isError || false;
 
-  if (isInitializing || (isAuthenticated && profileLoading)) {
+  // Track authentication flow stages with detailed logging
+  useEffect(() => {
+    const timestamp = new Date().toISOString();
+    
+    if (isInitializing) {
+      setCurrentStage('initializing');
+      console.log(`[${timestamp}] [App] Stage: Initializing Internet Identity`);
+    } else if (!isAuthenticated) {
+      setCurrentStage('not_authenticated');
+      console.log(`[${timestamp}] [App] Stage: Not authenticated`);
+    } else if (actorFetching) {
+      setCurrentStage('initializing_actor');
+      console.log(`[${timestamp}] [App] Stage: Initializing actor`, { actorAvailable: !!actor });
+    } else if (actorIsError) {
+      setCurrentStage('actor_error');
+      console.log(`[${timestamp}] [App] Stage: Actor initialization error`);
+    } else if (!actor) {
+      setCurrentStage('waiting_for_actor');
+      console.log(`[${timestamp}] [App] Stage: Waiting for actor`);
+    } else if (profileLoading && !isFetched) {
+      setCurrentStage('loading_profile');
+      console.log(`[${timestamp}] [App] Stage: Loading profile`);
+    } else if (isFetched && userProfile === null) {
+      setCurrentStage('profile_setup');
+      console.log(`[${timestamp}] [App] Stage: Profile setup required`);
+    } else if (userProfile) {
+      setCurrentStage('authenticated');
+      console.log(`[${timestamp}] [App] Stage: Authenticated and ready`, { 
+        userName: userProfile.name,
+        userRole: userProfile.role 
+      });
+    }
+  }, [isInitializing, isAuthenticated, actorFetching, actorIsError, actor, profileLoading, isFetched, userProfile]);
+
+  // 30-second timeout for authentication flow
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setAuthTimeout(false);
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      if (!actor || profileLoading || (!isFetched && !userProfile)) {
+        console.error(`[${new Date().toISOString()}] [App] Authentication timeout after 30 seconds`, {
+          actorAvailable: !!actor,
+          actorFetching,
+          actorIsError,
+          profileLoading,
+          isFetched,
+          userProfile: !!userProfile,
+          currentStage
+        });
+        setAuthTimeout(true);
+      }
+    }, 30000); // 30 seconds
+
+    return () => clearTimeout(timeoutId);
+  }, [isAuthenticated, actor, actorFetching, actorIsError, profileLoading, isFetched, userProfile, currentStage]);
+
+  // Handle authentication timeout
+  const handleRetryAuth = async () => {
+    console.log(`[${new Date().toISOString()}] [App] Retrying authentication flow`);
+    setAuthTimeout(false);
+    await clear();
+    queryClient.clear();
+    setTimeout(() => {
+      login();
+    }, 500);
+  };
+
+  if (isInitializing) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
+          <p className="text-muted-foreground">Initializing Internet Identity...</p>
         </div>
       </div>
     );
@@ -141,18 +228,100 @@ function AppContent() {
     );
   }
 
-  const showProfileSetup = isAuthenticated && !profileLoading && isFetched && userProfile === null;
+  // Show timeout error with retry button
+  if (authTimeout) {
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <Alert variant="destructive" className="max-w-md">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Authentication Timeout</AlertTitle>
+          <AlertDescription className="mt-2 space-y-4">
+            <p>The authentication process took too long to complete. This might be due to network issues or server problems.</p>
+            <p className="text-sm">Current stage: {currentStage}</p>
+            <Button onClick={handleRetryAuth} variant="outline" className="w-full mt-4">
+              Retry Authentication
+            </Button>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  // Show actor initialization error
+  if (actorIsError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <Alert variant="destructive" className="max-w-md">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Connection Error</AlertTitle>
+          <AlertDescription className="mt-2 space-y-4">
+            <p>Failed to establish connection with the backend. Please try again.</p>
+            <Button onClick={handleRetryAuth} variant="outline" className="w-full mt-4">
+              Retry Connection
+            </Button>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  // Show loading while actor is initializing
+  if (actorFetching || !actor) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Initializing connection...</p>
+          <p className="text-xs text-muted-foreground mt-2">Stage: {currentStage}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading while profile is being fetched for the first time
+  if (profileLoading && !isFetched) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show profile error
+  if (profileError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <Alert variant="destructive" className="max-w-md">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Profile Error</AlertTitle>
+          <AlertDescription className="mt-2 space-y-4">
+            <p>Failed to load your profile. Please try logging in again.</p>
+            <Button onClick={handleRetryAuth} variant="outline" className="w-full mt-4">
+              Retry
+            </Button>
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  // Show profile setup modal if user is authenticated but has no profile
+  const showProfileSetup = isAuthenticated && isFetched && userProfile === null;
 
   if (showProfileSetup) {
     return <ProfileSetupModal />;
   }
 
+  // If profile hasn't loaded yet but we're past the initial fetch, show loading
   if (!userProfile) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading profile...</p>
+          <p className="text-muted-foreground">Setting up your account...</p>
         </div>
       </div>
     );

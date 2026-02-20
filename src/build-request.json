@@ -1,62 +1,77 @@
 {
   "kind": "build_request",
-  "title": "Restore missing main navigation menu after Version 15 deployment",
+  "title": "Fix 'Detected both agent and agentOptions' error blocking actor initialization after Internet Identity login",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-66",
-      "text": "Restore the main navigation menu in frontend/src/App.tsx that displays menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) for both mobile and desktop views. The navigation menu disappeared after Version 15 deployment while the header with 'Voter Management System' title and logout button remain visible.",
+      "id": "REQ-85",
+      "text": "Fix the 'Detected both agent and agentOptions passed to createActor' error in the useActor hook (frontend/src/hooks/useActor.ts) by ensuring that only the agent parameter is passed to createActor, not both agent and agentOptions simultaneously. Remove or restructure the conflicting configuration that causes this initialization error.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1",
-          "msg-2",
-          "msg-3"
+          "msg-recent"
         ],
         "quotes": [
-          "menu bar is missing from both mobile and desktop view",
-          "1 yes main menu 2 yes it worked before last deployment 3 yes header and logout is visible"
+          "Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent.",
+          "[App] Stage: Initializing actor Object",
+          "[App] Stage: Waiting for actor"
         ]
       },
       "acceptanceCriteria": [
-        "Main navigation menu is visible on both mobile and desktop views",
-        "Menu displays all items: Dashboard, Add Voter, Voter List, Label Printing, Task Management, and Analytics",
-        "Navigation menu appears below or alongside the header with 'Voter Management System' title",
-        "Logout button remains visible and functional",
-        "Navigation links route correctly to their respective pages"
+        "The 'Detected both agent and agentOptions' console error no longer appears after Internet Identity login",
+        "The useActor hook successfully initializes the backend actor without conflicts",
+        "Actor initialization completes and transitions from 'Initializing actor' to 'Waiting for actor' to 'Actor ready' without hanging"
       ]
     },
     {
-      "id": "REQ-67",
-      "text": "Verify that the navigation menu rendering logic in frontend/src/App.tsx was not accidentally removed or conditionally hidden during the Version 15 deployment. Check for any CSS classes, conditional rendering, or display properties that may be causing the menu to be hidden.",
+      "id": "REQ-86",
+      "text": "Add defensive error handling to the useActor hook (frontend/src/hooks/useActor.ts) to catch actor initialization failures and return clear error states. Ensure that if createActor throws an error or fails, the error is logged with timestamp and the actor state reflects the failure instead of hanging indefinitely.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-recent"
         ],
         "quotes": [
-          "it worked before last deployment"
+          "Stage: Waiting for actor",
+          "Authentication timeout"
         ]
       },
       "acceptanceCriteria": [
-        "Navigation menu JSX elements are present in the App.tsx component",
-        "No CSS classes with display:none or visibility:hidden are applied to navigation elements",
-        "Conditional rendering logic does not prevent menu from displaying when user is authenticated",
-        "Navigation menu is not positioned off-screen or with zero height/width"
+        "Actor initialization errors are caught and logged to console with descriptive messages",
+        "The useActor hook returns an error state when initialization fails",
+        "The authentication flow does not hang indefinitely when actor creation fails"
+      ]
+    },
+    {
+      "id": "REQ-87",
+      "text": "Verify that the actor initialization properly completes after Internet Identity login by ensuring the authentication flow in frontend/src/App.tsx transitions through all states correctly: authenticated -> initializing actor -> actor ready -> loading profile -> profile loaded. Add console logging to confirm each state transition occurs without hanging at 'Waiting for actor'.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-recent"
+        ],
+        "quotes": [
+          "[App] Stage: Initializing actor Object",
+          "[App] Stage: Waiting for actor"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Console logs show the complete authentication state sequence without gaps",
+        "The application successfully transitions from 'Waiting for actor' to 'Actor ready' within 10 seconds",
+        "Profile loading begins immediately after actor initialization completes",
+        "The Dashboard or Profile Setup page displays after successful authentication"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the Internet Identity authentication logic in frontend/src/hooks/useInternetIdentity.ts",
-    "Keep the header with 'Voter Management System' title and logout button visible and functional",
-    "Maintain the existing dark blue (#002080) color scheme for header and buttons",
-    "Ensure navigation menu works with the existing TanStack Router setup"
+    "Do not modify the Internet Identity authentication integration in frontend/src/hooks/useInternetIdentity.ts",
+    "Maintain the existing 30-second timeout mechanism already implemented in frontend/src/App.tsx",
+    "Preserve the existing React Query configuration and query invalidation logic"
   ],
   "nonGoals": [
-    "Adding new navigation menu items beyond the six existing ones",
-    "Redesigning the navigation menu layout or styling",
-    "Modifying the logout button behavior or appearance",
-    "Changing the header text or responsive sizing"
+    "Changing the Internet Identity authentication provider or login flow",
+    "Modifying backend canister methods or actor interface definitions",
+    "Adding new authentication features or alternative login methods"
   ],
   "imageRequirements": {
     "required": [],

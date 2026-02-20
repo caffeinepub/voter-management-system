@@ -1,12 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Restore the missing main navigation menu that disappeared after Version 15 deployment.
+**Goal:** Fix the actor initialization error that blocks the application after Internet Identity login by resolving the conflicting agent/agentOptions parameters in the useActor hook.
 
 **Planned changes:**
-- Restore navigation menu in frontend/src/App.tsx displaying all six menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics)
-- Verify navigation menu JSX elements are present and not hidden by CSS or conditional rendering
-- Ensure menu is visible on both mobile and desktop views
-- Maintain existing header with logout button functionality
+- Fix the 'Detected both agent and agentOptions' error in useActor hook by ensuring only the agent parameter is passed to createActor
+- Add error handling to catch and log actor initialization failures with clear error states
+- Add console logging to verify complete authentication state transitions from authenticated through actor ready to profile loaded
 
-**User-visible outcome:** Users can see and use the main navigation menu to access all sections of the application (Dashboard, Add Voter, Voter List, Label Printing, Task Management, and Analytics) on both mobile and desktop devices.
+**User-visible outcome:** Users can successfully log in with Internet Identity and immediately access their Dashboard or Profile Setup page without the application hanging at the "Waiting for actor" stage.

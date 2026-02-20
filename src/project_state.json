@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 33,
+  "projectStateVersion": 41,
   "summary": "Election voter management system with role-based access (Admin, Supervisor, Karyakarta), voter data entry with photo/document uploads, and incremental feature development planned",
   "architectural_notes": [
     "Internet Identity used for authentication (no OTP support on platform)",
@@ -20,7 +20,8 @@
     "External messaging features must be added post-deployment outside this platform",
     "Advanced search feature previously implemented but missing from current UI - needs to be rebuilt and made visible on Voter List page",
     "Save Voter button shows no visual feedback and fails silently with console error: 'Cannot convert [alphanumeric] to a BigInt' - backend voterId field type mismatch (expects Nat but receives Text)",
-    "Main navigation menu disappeared after Version 15 deployment - menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) not visible on both mobile and desktop views, though header and logout button remain visible"
+    "Main navigation menu disappeared after Version 15 deployment - menu items (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) not visible on both mobile and desktop views, though header and logout button remain visible",
+    "Application remains stuck indefinitely on blank loading page immediately after Internet Identity login completes due to 'Detected both agent and agentOptions passed to createActor' error - prevents all application access"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -487,6 +488,118 @@
         "REQ-67"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-remove-or-fix-any-overlay-loading-state-or-event-handler-in-frontend-src-app-tsx-that-blocks-form-input-interactions-after-internet-identity-authentication-completes-ensure-no-modal-backdrop-z-index-layer-or-pointer-events-blocking-remains-active-after-the-profile-loading-finishes",
+      "title": "Remove or fix any overlay, loading state, or event handler in frontend/src/App.tsx that blocks form input interactions after Internet Identity authentication completes. Ensure no modal backdrop, z-index layer, or pointer-events blocking remains active after the profile loading finishes.",
+      "reqIds": [
+        "REQ-68"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-modify-the-usegetcalleruserprofile-hook-in-frontend-src-hooks-usegetcalleruserprofile-ts-to-ensure-the-profile-fetch-executes-exactly-once-after-login-and-does-not-repeatedly-poll-or-block-the-ui-remove-any-infinite-query-refetch-intervals-or-stale-while-revalidate-behavior-that-causes-continuous-getcalleruserprofile-calls-visible-in-console-logs",
+      "title": "Modify the useGetCallerUserProfile hook in frontend/src/hooks/useGetCallerUserProfile.ts to ensure the profile fetch executes exactly once after login and does not repeatedly poll or block the UI. Remove any infinite query refetch intervals or stale-while-revalidate behavior that causes continuous getCallerUserProfile() calls visible in console logs.",
+      "reqIds": [
+        "REQ-69"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-explicit-focus-management-in-frontend-src-app-tsx-to-ensure-form-input-fields-regain-focus-capability-immediately-after-the-authentication-flow-completes-clear-any-global-event-listeners-or-focus-traps-that-may-be-interfering-with-form-input-after-profile-setup",
+      "title": "Add explicit focus management in frontend/src/App.tsx to ensure form input fields regain focus capability immediately after the authentication flow completes. Clear any global event listeners or focus traps that may be interfering with form input after profile setup.",
+      "reqIds": [
+        "REQ-70"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-profilesetupmodal-component-in-frontend-src-components-profilesetupmodal-tsx-does-not-remain-mounted-or-block-input-after-submission-ensure-the-modal-properly-unmounts-and-releases-focus-control-when-profile-setup-completes-successfully",
+      "title": "Verify that the ProfileSetupModal component in frontend/src/components/ProfileSetupModal.tsx does not remain mounted or block input after submission. Ensure the modal properly unmounts and releases focus control when profile setup completes successfully.",
+      "reqIds": [
+        "REQ-71"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-or-fix-any-react-query-query-configuration-in-frontend-src-hooks-usegetcalleruserprofile-ts-that-causes-the-profile-query-to-remain-in-a-perpetual-fetching-or-loading-state-set-appropriate-staletime-and-refetchonmount-options-to-prevent-continuous-background-refetches-that-may-interfere-with-form-interactions",
+      "title": "Remove or fix any React Query query configuration in frontend/src/hooks/useGetCallerUserProfile.ts that causes the profile query to remain in a perpetual 'fetching' or 'loading' state. Set appropriate staleTime and refetchOnMount options to prevent continuous background refetches that may interfere with form interactions.",
+      "reqIds": [
+        "REQ-72"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-or-fix-any-overlay-modal-backdrop-loading-state-or-z-index-layer-in-frontend-src-app-tsx-that-remains-active-and-blocks-user-input-after-the-authentication-flow-completes-ensure-no-pointer-events-blocking-css-or-event-handlers-prevent-form-interactions-after-profile-loading-finishes",
+      "title": "Remove or fix any overlay, modal backdrop, loading state, or z-index layer in frontend/src/App.tsx that remains active and blocks user input after the authentication flow completes. Ensure no pointer-events blocking CSS or event handlers prevent form interactions after profile loading finishes.",
+      "reqIds": [
+        "REQ-74"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-explicit-focus-management-in-frontend-src-app-tsx-to-ensure-form-input-fields-regain-focus-capability-immediately-after-the-authentication-flow-completes-clear-any-global-event-listeners-focus-traps-or-capture-phase-handlers-that-may-be-intercepting-user-input-events-after-profile-setup-completes",
+      "title": "Add explicit focus management in frontend/src/App.tsx to ensure form input fields regain focus capability immediately after the authentication flow completes. Clear any global event listeners, focus traps, or capture phase handlers that may be intercepting user input events after profile setup completes.",
+      "reqIds": [
+        "REQ-75"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-profilesetupmodal-component-in-frontend-src-components-profilesetupmodal-tsx-properly-unmounts-and-releases-all-focus-control-when-profile-setup-completes-successfully-ensure-the-modal-does-not-remain-mounted-in-a-hidden-state-or-leave-behind-event-handlers-that-interfere-with-subsequent-form-interactions",
+      "title": "Verify that the ProfileSetupModal component in frontend/src/components/ProfileSetupModal.tsx properly unmounts and releases all focus control when profile setup completes successfully. Ensure the modal does not remain mounted in a hidden state or leave behind event handlers that interfere with subsequent form interactions.",
+      "reqIds": [
+        "REQ-76"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-configure-the-usegetvoters-hook-in-frontend-src-hooks-usegetvoters-ts-to-automatically-refresh-voter-data-when-the-dashboard-page-is-mounted-or-navigated-to-after-authentication-completes-set-refetchonmount-true-and-refetchonwindowfocus-false-to-ensure-fresh-data-loads-when-accessing-the-dashboard-without-continuous-background-polling",
+      "title": "Configure the useGetVoters hook in frontend/src/hooks/useGetVoters.ts to automatically refresh voter data when the Dashboard page is mounted or navigated to after authentication completes. Set refetchOnMount: true and refetchOnWindowFocus: false to ensure fresh data loads when accessing the Dashboard without continuous background polling.",
+      "reqIds": [
+        "REQ-77"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-react-query-configuration-in-frontend-src-app-tsx-to-set-global-defaults-that-prevent-excessive-refetching-staletime-5-minutes-refetchonwindowfocus-false-refetchonreconnect-false-these-defaults-will-prevent-continuous-polling-while-still-allowing-manual-refetches-and-cache-invalidation-when-needed",
+      "title": "Update the React Query configuration in frontend/src/App.tsx to set global defaults that prevent excessive refetching: staleTime: 5 minutes, refetchOnWindowFocus: false, refetchOnReconnect: false. These defaults will prevent continuous polling while still allowing manual refetches and cache invalidation when needed.",
+      "reqIds": [
+        "REQ-78"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-30-second-timeout-mechanism-to-the-authentication-flow-in-frontend-src-app-tsx-that-detects-when-the-actor-initialization-or-profile-loading-remains-stuck-after-internet-identity-login-completes-if-timeout-is-reached-display-an-error-message-with-a-retry-button-that-allows-users-to-restart-the-authentication-process",
+      "title": "Add a 30-second timeout mechanism to the authentication flow in frontend/src/App.tsx that detects when the actor initialization or profile loading remains stuck after Internet Identity login completes. If timeout is reached, display an error message with a retry button that allows users to restart the authentication process.",
+      "reqIds": [
+        "REQ-81"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-usegetcalleruserprofile-hook-frontend-src-hooks-usegetcalleruserprofile-ts-properly-handles-cases-where-the-actor-is-unavailable-or-initialization-fails-add-defensive-checks-to-prevent-the-profile-query-from-executing-before-the-actor-is-ready-and-return-appropriate-error-states-when-actor-initialization-fails",
+      "title": "Ensure the useGetCallerUserProfile hook (frontend/src/hooks/useGetCallerUserProfile.ts) properly handles cases where the actor is unavailable or initialization fails. Add defensive checks to prevent the profile query from executing before the actor is ready, and return appropriate error states when actor initialization fails.",
+      "reqIds": [
+        "REQ-82"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-detailed-console-logging-to-the-authentication-flow-sequence-in-frontend-src-app-tsx-useactor-hook-and-usegetcalleruserprofile-hook-to-trace-the-exact-stage-where-initialization-fails-log-timestamps-and-state-transitions-for-internet-identity-login-complete-actor-initialization-started-actor-ready-profile-query-started-profile-query-complete",
+      "title": "Add detailed console logging to the authentication flow sequence in frontend/src/App.tsx, useActor hook, and useGetCallerUserProfile hook to trace the exact stage where initialization fails. Log timestamps and state transitions for: Internet Identity login complete, actor initialization started, actor ready, profile query started, profile query complete.",
+      "reqIds": [
+        "REQ-83"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-authentication-flow-in-frontend-src-app-tsx-properly-transitions-through-all-states-after-internet-identity-login-authenticated-initializing-actor-actor-ready-loading-profile-profile-loaded-setup-required-ensure-no-state-is-skipped-and-the-ui-updates-correctly-at-each-transition-without-getting-stuck",
+      "title": "Verify that the authentication flow in frontend/src/App.tsx properly transitions through all states after Internet Identity login: authenticated -> initializing actor -> actor ready -> loading profile -> profile loaded/setup required. Ensure no state is skipped and the UI updates correctly at each transition without getting stuck.",
+      "reqIds": [
+        "REQ-84"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -749,6 +862,78 @@
       "id": "AR-37",
       "summary": "Fix missing main navigation menu (Dashboard, Add Voter, Voter List, Label Printing, Task Management, Analytics) that disappeared after Version 15 deployment - menu items not visible in both mobile and desktop views while header and logout button remain visible",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "Fix form input blocking issue after Internet Identity login - all forms and popups (Add Voter form, User Setup modal, Task Creation popup, etc.) are completely unresponsive and cannot accept any typed input; refreshing does not help; profile fetching should occur once on login and then stop instead of blocking form interactions",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-39",
+      "summary": "Modify the useGetCallerUserProfile hook in frontend/src/hooks/useGetCallerUserProfile.ts to remove all automatic refetching behavior. Set refetchOnMount: false, refetchOnWindowFocus: false, refetchOnReconnect: false, and staleTime: Infinity to ensure the profile query executes exactly once after login and never polls or refetches automatically.",
+      "reqIds": [
+        "REQ-73"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-40",
+      "summary": "Fix 'Detected both agent and agentOptions passed to createActor' error that occurs immediately after Internet Identity login, causing application to remain stuck indefinitely on a blank loading page",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-41",
+      "summary": "Remove conflicting agent/agentOptions configuration from actor initialization logic in useActor hook to resolve createActor error during authentication flow",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-42",
+      "summary": "Add proper error handling and timeout protection to the authentication flow after Internet Identity login to prevent indefinite loading states and ensure smooth transition from login to profile loading to dashboard/setup page",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-43",
+      "summary": "Fix the 'Detected both agent and agentOptions passed to createActor' error in the useActor hook (frontend/src/hooks/useActor.ts) by removing the conflicting configuration where both agent and agentOptions are being passed simultaneously to the createActor function. Only pass one of these parameters to resolve the initialization conflict.",
+      "reqIds": [
+        "REQ-79"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-44",
+      "summary": "Add comprehensive error handling to the useActor hook (frontend/src/hooks/useActor.ts) to catch and log actor initialization failures with descriptive error messages. Ensure that actor creation errors do not cause silent failures that leave the application stuck in loading state.",
+      "reqIds": [
+        "REQ-80"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-45",
+      "summary": "Fix the 'Detected both agent and agentOptions passed to createActor' error in the useActor hook (frontend/src/hooks/useActor.ts) by ensuring that only the agent parameter is passed to createActor, not both agent and agentOptions simultaneously. Remove or restructure the conflicting configuration that causes this initialization error.",
+      "reqIds": [
+        "REQ-85"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-46",
+      "summary": "Add defensive error handling to the useActor hook (frontend/src/hooks/useActor.ts) to catch actor initialization failures and return clear error states. Ensure that if createActor throws an error or fails, the error is logged with timestamp and the actor state reflects the failure instead of hanging indefinitely.",
+      "reqIds": [
+        "REQ-86"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-47",
+      "summary": "Verify that the actor initialization properly completes after Internet Identity login by ensuring the authentication flow in frontend/src/App.tsx transitions through all states correctly: authenticated -> initializing actor -> actor ready -> loading profile -> profile loaded. Add console logging to confirm each state transition occurs without hanging at 'Waiting for actor'.",
+      "reqIds": [
+        "REQ-87"
+      ],
       "status": "pending"
     }
   ],

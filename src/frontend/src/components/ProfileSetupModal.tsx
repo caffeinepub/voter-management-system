@@ -40,8 +40,13 @@ export default function ProfileSetupModal() {
   };
 
   return (
-    <Dialog open={true}>
-      <DialogContent className="sm:max-w-md bg-white" onPointerDownOutside={(e) => e.preventDefault()}>
+    <Dialog open={true} modal={true}>
+      <DialogContent 
+        className="sm:max-w-md bg-white pointer-events-auto" 
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <div className="flex justify-center mb-4">
             <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: '#002080' }}>
@@ -63,16 +68,18 @@ export default function ProfileSetupModal() {
               onChange={(e) => setName(e.target.value)}
               disabled={isPending}
               autoFocus
+              autoComplete="off"
+              className="pointer-events-auto"
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="role">Role</Label>
             <Select value={role} onValueChange={setRole} disabled={isPending}>
-              <SelectTrigger id="role" className="bg-white">
+              <SelectTrigger id="role" className="bg-white pointer-events-auto">
                 <SelectValue placeholder="Select your role" />
               </SelectTrigger>
-              <SelectContent className="bg-white">
+              <SelectContent className="bg-white pointer-events-auto">
                 <SelectItem value="Admin">Admin</SelectItem>
                 <SelectItem value="Supervisor">Supervisor</SelectItem>
                 <SelectItem value="Karyakarta">Karyakarta</SelectItem>
@@ -80,7 +87,7 @@ export default function ProfileSetupModal() {
             </Select>
           </div>
 
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button type="submit" className="w-full pointer-events-auto" disabled={isPending}>
             {isPending ? 'Creating Profile...' : 'Create Profile'}
           </Button>
         </form>
