@@ -1,0 +1,45 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Fix duplicate agent/agentOptions conflict in createActor causing 400 errors",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Fix actor creation logic to prevent passing both agent and agentOptions simultaneously, eliminating console warnings and 400 errors",
+      "acceptanceCriteria": [
+        "The console warning 'Detected both agent and agentOptions passed to createActor' no longer appears.",
+        "No 400 errors are returned from icp-api.io/api/v3/canister/.../call.",
+        "The actor is successfully created whether the user is authenticated or anonymous.",
+        "Profile loading no longer gets stuck in an infinite loop."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useActor.ts",
+          "operation": "modify",
+          "description": "Modify the actor creation logic to ensure only one of `agent` or `agentOptions` is passed to createActor. When an authenticated identity is available, construct the agent first using HttpAgent with the identity, then pass only the agent parameter. When no identity is present, pass only agentOptions without constructing an agent. Remove any code that simultaneously provides both parameters to createActor, ensuring the conflict is resolved at the source."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Gate profile query execution until actor is fully initialized to prevent premature unauthenticated canister calls",
+      "acceptanceCriteria": [
+        "useGetCallerUserProfile query does not fire until the actor instance is confirmed ready.",
+        "No canister calls are made in an unauthenticated or partially initialized state.",
+        "App.tsx auth state machine transitions correctly from initialization → login → profile loading → app, without premature queries."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useGetCallerUserProfile.ts",
+          "operation": "modify",
+          "description": "Add a strict readiness check that ensures the query is only enabled after both the actor is available and actorFetching is false. Update the enabled condition to: `enabled: !!actor && !actorFetching && !!identity`, where identity comes from useInternetIdentity. Ensure isLoading reflects both actor and query loading states, and isFetched only returns true when the actor was ready before the query executed."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Audit the authentication state machine to ensure profile loading (useGetCallerUserProfile) only occurs after the actor is confirmed initialized and the identity is available. Add defensive checks to prevent rendering profile-dependent UI until both actorFetching is false and the identity exists. Ensure the state transitions flow correctly: initialization → login screen (if no identity) → profile loading (with strict gates) → app layout, without triggering premature queries during actor initialization."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-audit-usegetcalleruserprofile-ts-and-app-tsx-to-ensure-the-profile-query-is-only-enabled-and-executed-after-the-actor-is-fully-initialized-not-before-authentication-state-and-actor-creation-are-complete-gate-the-query-with-a-strict-readiness-check-so-premature-unauthenticated-canister-calls-cannot-occur",
+      "featureTitle": "Audit useGetCallerUserProfile.ts and App.tsx to ensure the profile query is only enabled and executed after the actor is fully initialized (not before authentication state and actor creation are complete). Gate the query with a strict readiness check so premature unauthenticated canister calls cannot occur.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/hooks/useGetCallerUserProfile.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

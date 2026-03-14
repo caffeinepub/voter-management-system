@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Project involves an ICP (Internet Computer Protocol) app with a login system and profile loading. There is an ongoing bug where both agent and agentOptions are passed to createActor, causing 400 errors and infinite loading on profile fetch.",
+  "architectural_notes": [
+    "Uses ICP canister (qy6vr-sqaaa-aaaac-bazra-cai) via icp-api.io for backend calls",
+    "Actor creation must only pass agent OR agentOptions to createActor, never both"
+  ],
+  "known_issues": [
+    "createActor receives both agent and agentOptions simultaneously, causing repeated 400 errors and profile loading stuck in infinite loop"
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-audit-usegetcalleruserprofile-ts-and-app-tsx-to-ensure-the-profile-query-is-only-enabled-and-executed-after-the-actor-is-fully-initialized-not-before-authentication-state-and-actor-creation-are-complete-gate-the-query-with-a-strict-readiness-check-so-premature-unauthenticated-canister-calls-cannot-occur",
+      "title": "Audit useGetCallerUserProfile.ts and App.tsx to ensure the profile query is only enabled and executed after the actor is fully initialized (not before authentication state and actor creation are complete). Gate the query with a strict readiness check so premature unauthenticated canister calls cannot occur.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Fix the actor creation logic in useActor.ts so that it never passes both `agent` and `agentOptions` simultaneously to `createActor`. When an authenticated identity/agent is available, pass only the `agent` parameter. When no identity is available, pass only `agentOptions` (or construct the agent first and then pass only the resulting agent). Ensure no duplicate or conflicting actor configuration reaches the ICP SDK.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Fix duplicate agent/agentOptions conflict in createActor causing 400 errors",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

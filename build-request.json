@@ -1,0 +1,60 @@
+{
+  "kind": "build_request",
+  "title": "Fix duplicate agent/agentOptions conflict in createActor causing 400 errors",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Fix the actor creation logic in useActor.ts so that it never passes both `agent` and `agentOptions` simultaneously to `createActor`. When an authenticated identity/agent is available, pass only the `agent` parameter. When no identity is available, pass only `agentOptions` (or construct the agent first and then pass only the resulting agent). Ensure no duplicate or conflicting actor configuration reaches the ICP SDK.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent.",
+          "Failed to load resource: the server responded with a status of 400 ()"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The console warning 'Detected both agent and agentOptions passed to createActor' no longer appears.",
+        "No 400 errors are returned from icp-api.io/api/v3/canister/.../call.",
+        "The actor is successfully created whether the user is authenticated or anonymous.",
+        "Profile loading no longer gets stuck in an infinite loop."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Audit useGetCallerUserProfile.ts and App.tsx to ensure the profile query is only enabled and executed after the actor is fully initialized (not before authentication state and actor creation are complete). Gate the query with a strict readiness check so premature unauthenticated canister calls cannot occur.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "still the issue continues",
+          "profile loading issue is resolved and the app is no longer stuck"
+        ]
+      },
+      "acceptanceCriteria": [
+        "useGetCallerUserProfile query does not fire until the actor instance is confirmed ready.",
+        "No canister calls are made in an unauthenticated or partially initialized state.",
+        "App.tsx auth state machine transitions correctly from initialization → login → profile loading → app, without premature queries."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not edit frontend/src/hooks/useInternetIdentity.ts or frontend/src/hooks/useActor.ts structure beyond the minimal fix needed — useActor.ts is immutable per platform rules; implement the fix in a wrapper or in the calling code instead.",
+    "Do not break the existing Internet Identity login flow.",
+    "Do not remove the login system unless no other fix is viable."
+  ],
+  "nonGoals": [
+    "Redesigning the authentication UI or login screen.",
+    "Changing the backend Motoko actor logic.",
+    "Adding new features or pages."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

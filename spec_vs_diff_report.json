@@ -1,0 +1,24 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-26T18:22:10.111Z",
+  "summary": "The diff implements REQ-2 (gating profile query behind actor/auth readiness in useGetCallerUserProfile.ts and App.tsx state machine) but does NOT implement REQ-1 (fixing the duplicate agent/agentOptions conflict in useActor.ts). The constraint explicitly states useActor.ts is immutable, but the requirement still asks for a wrapper or calling-code fix — no such fix appears in the diff. useActor.ts is not modified and no wrapper is introduced.",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "Fix the actor creation logic so that it never passes both agent and agentOptions simultaneously to createActor. When an authenticated identity/agent is available, pass only the agent parameter. When no identity is available, pass only agentOptions. The fix may be in a wrapper or calling code rather than useActor.ts directly.",
+      "reason": "No changes to useActor.ts are present in the diff, and no wrapper or calling-code fix that intercepts or corrects the agent/agentOptions conflict was introduced. The diff only modifies App.tsx, useGetCallerUserProfile.ts, frontend-file-summaries.txt, and project_state.json, none of which address the duplicate agent/agentOptions issue in actor creation.",
+      "evidence": [
+        "frontend/src/hooks/useActor.ts"
+      ]
+    }
+  ],
+  "hallucinated_features": [],
+  "confidence": 0.9,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/App.tsx",
+    "frontend/src/hooks/useGetCallerUserProfile.ts",
+    "project_state.json"
+  ]
+}
